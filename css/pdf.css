@@ -1,0 +1,148 @@
+@page {
+	margin: 5px;
+}
+body {
+	background: url(../images/border.gif) repeat-y 230px 0;
+	color: #333;
+	font-family: 'Lucida Sans', 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+	margin: 5px;
+}
+a {
+	text-decoration: none;
+}
+h1 {
+	font-size: 24px;
+	font-weight: normal;
+	line-height: 30px;
+	margin: 0;
+	padding: 15px 0 0 0;
+	text-align: right;
+	text-transform: uppercase;
+}
+h2 {
+	font-weight: normal;
+	font-size: 20px;
+	font-style: italic;
+	line-height: 20px;
+	margin: 0;
+	padding: 15px 0 0 0;
+}
+h2.long {
+	font-size: 18px;
+	line-height: 1.3em;
+}
+h3 {
+	font-size: 20px;
+	font-weight: normal;
+	margin: 0;
+	padding: 15px 0 0 0;
+}
+h4 {
+	color: #5e6a71;
+	font-size: 16px;
+	margin: 0;
+	padding: 15px 0 0 0;
+	text-transform: uppercase;
+}
+h1,
+h2,
+h3,
+.footer strong,
+.footer a {
+	color: #981e32;
+}
+.footer a {
+	font-weight: bold;
+}
+ul {
+	margin: 0;
+	padding: 0 0 0 20px;
+}
+li {
+	padding: 6px 0 6px 0;
+}
+.column.right > ul > li {
+	text-align: justify;
+}
+.row {
+	font-size: 0;
+}
+.column {
+	display: inline-block;
+}
+.column.left {
+	padding: 0 10px 10px 0;
+	width: 220px;
+}
+.column.right {
+	padding: 0 15px;
+	width: 530px;
+}
+.header {
+	border-bottom: 1px solid #5e6a71;
+}
+.header .column.left img {
+	height: 188px;
+	width: 220px;
+}
+.header .column.right {
+	padding: 0 0 10px 10px;
+	width: 555px;
+}
+.header .column.right img {
+	height: 188px;
+	width: 555px;
+}
+.page-two.header .column.right img {
+	width: 272px;
+}
+.page-two.header .column.right img:last-of-type {
+	margin-left: 10px;
+}
+.content {
+	font-size: 14px;
+}
+.content .column.left {
+	padding: 0 10px;
+	width: 210px;
+}
+.content .column.right {
+	text-align: justify;
+}
+.footer {
+	border-top: 1px solid #5e6a71;
+	bottom: 0;
+	color: #555;
+	font-size: 11px;
+	left: 0;
+	position: absolute;
+	text-align: center;
+}
+.page-one.footer {
+	page-break-after: always;
+}
+.bottom-left-image {
+	left: 0;
+	position: absolute;
+	width: 220px;
+}
+.footer .column.left {
+	padding: 0 10px 0 0;
+}
+.footer .column.left div {
+	background-color: #981e32;
+	font-size: 14px;
+	height: 30px;
+	margin-top: 10px;
+	padding: 8px;
+}
+.footer .column.left div a {
+	color: #fff;
+	font-weight: bold;
+	line-height: 25px;
+	text-decoration: none;
+}
+.page-two.footer {
+	background: #fff;
+	padding: 15px 15px 0 15px;
+}

@@ -1,0 +1,76 @@
+#postdivrich,
+#programs-tabs,
+#programs-pop,
+#programs-adder,
+#locations-tabs,
+#locations-pop,
+#locations-adder,
+#categories-tabs,
+#categories-pop,
+#categories-adder,
+.upload-image-id {
+	display: none;
+}
+#programs-all.tabs-panel,
+#locations-all.tabs-panel,
+#categories-all.tabs-panel {
+	background-color: transparent;
+	border: none;
+	padding: 0;
+}
+#programschecklist,
+#locationschecklist,
+#categorieschecklist {
+	margin: 0;
+}
+#poststuff h3.impact-report-title {
+	padding: 0;
+}
+#poststuff p.impact-report-description {
+	margin: 0 0 4px;
+}
+#wp-ir_summary-wrap,
+.impact-report-character-count,
+#wp-ir_footer_front-wrap,
+#wp-ir_footer_back-wrap {
+	margin-bottom: 40px;
+}
+.impact-report-character-count {
+	border-top: none;
+	font-size: 12px;
+	font-weight: normal;
+	padding: 2px 10px;
+	position: relative;
+}
+label[for="ir_impacts_position"] {
+	float: right;
+}
+.upload-set-wrapper {
+	padding: 0 0 12px;
+}
+.upload-set-wrapper img {
+	height: auto;
+	max-width: 100%;
+	width: 100%;
+}
+.upload-set-wrapper .hide-if-no-js {
+	margin-bottom: 0;
+}
+.impact-report-image-size {
+	margin-top: 0;
+}
+.impact-report-submit-for-review {
+	float: right;
+	line-height: 23px;
+	text-align: right;
+}
+#impact-report-additional-title-wrap {
+	position: relative;
+}
+#impact-report-additional-title-prompt-text {
+	color: #777;
+	cursor: text;
+	font-size: 14px;
+	padding: 5px 7px;
+	position: absolute;
+}
