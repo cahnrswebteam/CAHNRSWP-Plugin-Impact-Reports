@@ -11,7 +11,7 @@ a {
 	text-decoration: none;
 }
 h1 {
-	font-size: 24px;
+	font-size: 23px;
 	font-weight: normal;
 	line-height: 30px;
 	margin: 0;
@@ -80,6 +80,7 @@ li {
 }
 .header {
 	border-bottom: 1px solid #5e6a71;
+	height: 198px;
 }
 .header .column.left img {
 	height: 188px;

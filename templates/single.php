@@ -80,15 +80,35 @@
 
 		<div class="column two">
 
-			<h2>Report Archive</h2>
-			<ul class="impact-report-tabs">
-				<?php 
-					$pdf_meta = get_post_meta( get_the_ID(), 'pdf_link',true );
-					if ( $pdf_meta ) {
-						echo '<li><a href="'.$pdf_meta.'">Print version (PDF) &raquo;</a></li>';
+			<?php 
+				$pdf_meta = get_post_meta( get_the_ID(), '_impact_report_pdfs', true );
+				if ( $pdf_meta ) {
+					foreach ( $pdf_meta as $year => $file ) {
+						if ( date('Y') == (int) $year ) {
+							echo '<h2 id="impact-report-pdf"><a href="' . $file . '">Print Version (PDF) &raquo;</a></h2>';
+							unset( $pdf_meta[date('Y')] );
+						}
 					}
-				?>
-			</ul>
+				}
+				if ( $pdf_meta ) {
+					?>
+					<dl id="impact-report-pdf-archive">
+						<dt>
+							<h2>PDF Archive</h2>
+						</dt>
+						<dd>
+							<ul>
+							<?php
+								foreach ( $pdf_meta as $year => $file ) {
+									echo '<li><a href="' . $file . '">' . $year . '</a></li>';
+								}
+							?>
+							</ul>
+						</dd>
+					</dl>
+					<?php
+				}
+			?>
 
 			<h4 id="numbers">By the numbers</h4>
       <?php

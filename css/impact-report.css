@@ -1,0 +1,38 @@
+#impact-report-pdf {
+	background: #fff;
+	font-size: 0.9rem;
+	font-weight: normal;
+	margin-bottom: 1px;
+	padding: 0.5rem 1rem;
+	text-align: right;
+}
+#impact-report-pdf-archive {
+	background-color: #fff;
+	padding: 0 1rem;
+}
+#impact-report-pdf-archive dt {
+	background: url(../images/plus-crimson.svg) right center no-repeat;
+	background-size: 12px 12px;
+	cursor: pointer;
+	display: block;
+	padding: 0.5rem 0;
+}
+#impact-report-pdf-archive dt:hover {
+	background-image: url(../images/plus-red.svg);
+}
+#impact-report-pdf-archive.disclosed dt {
+	background-image: url(../images/x-crimson.svg);
+}
+#impact-report-pdf-archive.disclosed dt:hover {
+	background-image: url(../images/x-red.svg);
+}
+#impact-report-pdf-archive dt h2 {
+	color: #981e32;
+	font-size: 0.9rem;
+	font-weight: normal;
+	padding: 0 1rem 0 0;
+	text-align: right;
+}
+#impact-report-pdf-archive dt h2:hover {
+	color: #c60c30;
+}

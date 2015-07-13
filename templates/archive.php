@@ -8,14 +8,12 @@
 
 		<div class="column one">
 
-			<?php // Widget area
-				if ( is_active_sidebar( 'impact-report-archive' ) )
-					dynamic_sidebar( 'impact-report-archive' );
-			?>
+			<?php echo wpautop( wp_kses_post( get_option( 'impact_report_archive_blurb' ) ) ); ?>
 
 			<?php
-				// modify loop
-				//'meta_key=_impact_report_visibility&meta_value=display'
+				// Modify loop. Probably not the best way to do it... maybe a wp_query instead
+				global $query_string;
+				query_posts( $query_string . '&meta_key=_impact_report_visibility&meta_value=display' );
 			?>
 
 			<?php while ( have_posts() ) : the_post(); ?>

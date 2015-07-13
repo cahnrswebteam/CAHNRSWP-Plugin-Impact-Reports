@@ -6,18 +6,6 @@ Author: CAHNRS, danialbleile, philcable
 Version: 0.1.1
 */
 
-/**
- * @todo:
- *	PDF archiving.
- *	http://codex.wordpress.org/Function_Reference/register_post_type#Flushing_Rewrite_on_Activation.
- *	Character count.
- *	Backend visual overhaul (better reflect front-end).
- *	"Send for review" function (https://wordpress.org/support/topic/email-notification-to-admin-for-pending-posts).
- *		use built-in capabilities for this, may have to reconcile contributor and author
- *	Use CAHNRS Topics instead of IR Categories?
- *  Use University Locations instead of IR locations?
- */ 
-
 class CAHNRSWP_Impact_Reports {
 
 	/**
@@ -142,7 +130,6 @@ class CAHNRSWP_Impact_Reports {
 	/**
 	 * @var string: Impact report editor email.
 	 */
-	//var $impact_report_editor = get_option( 'impact_report_editor_email' );
 	public $impact_report_editor;
 
 	/**
@@ -159,8 +146,7 @@ class CAHNRSWP_Impact_Reports {
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 10, 2 );
 		add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
 		add_filter( 'post_updated_messages', array( $this, 'post_updated_messages' ) );
-		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
-		//add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 9999 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
 		$this->impact_report_editor = get_option( 'impact_report_editor_email' );
 	}
@@ -300,6 +286,7 @@ class CAHNRSWP_Impact_Reports {
 	 */
 	public function admin_init() {
 		register_setting( 'impact_report_options', 'impact_report_editor_email' );
+		register_setting( 'impact_report_options', 'impact_report_archive_blurb' );
 		add_filter( 'mce_external_plugins', array( $this, 'mce_external_plugins' ) );
 	}
 
@@ -316,7 +303,11 @@ class CAHNRSWP_Impact_Reports {
 <table class="form-table">
 <tr valign="top">
 <th scope="row">Editor E-mail Address</th>
-<td><input type="text" name="impact_report_editor_email" value="<?php echo esc_attr( get_option('impact_report_editor_email') ); ?>" /></td>
+<td><input type="text" name="impact_report_editor_email" value="<?php echo esc_attr( get_option( 'impact_report_editor_email' ) ); ?>" /></td>
+</tr>
+<tr valign="top">
+<th scope="row">Archive blurb</th>
+<td><?php wp_editor( wp_kses_post( get_option( 'impact_report_archive_blurb' ) ), 'impact_report_archive_blurb' ); ?></td>
 </tr>
 </table>
 <?php submit_button(); ?>
@@ -474,7 +465,7 @@ class CAHNRSWP_Impact_Reports {
 				'media_buttons' => false
 			);
 			
-			wp_editor( $value, $i_k , $editor_settings );
+			wp_editor( $value, $i_k, $editor_settings );
 
 			// Character count for main body components.
 			if ( $i_d['type'] == 'main' ) {
@@ -521,19 +512,11 @@ class CAHNRSWP_Impact_Reports {
 		if ( current_user_can( 'manage_options' ) ) {
 			add_meta_box(
 				'impact_report_review',
-				'Visibility',
-				array( $this, 'impact_report_visibility' ),
+				'Editor Options',
+				array( $this, 'impact_report_editor_options' ),
 				$this->impact_report_content_type,
 				'side',
 				'high'
-			);
-			add_meta_box(
-				'impact_report_pdf_revision',
-				'History Revision',
-				array( $this, 'impact_report_pdf_revision' ),
-				$this->impact_report_content_type,
-				'side',
-				'core'
 			);
 		}
 		add_meta_box(
@@ -577,19 +560,29 @@ class CAHNRSWP_Impact_Reports {
 	/**
 	 * Visibility options.
 	 */
-	public function impact_report_visibility( $post ) {
-		echo '<p class="description">Not all impact reports are intented to be featured on the Extension Impacts page.</p>';
-		$value = get_post_meta( $post->ID, '_impact_report_visibility', true );
+	public function impact_report_editor_options( $post ) {
+		// Visibility
 		echo '<p><label for="_impact_report_visibility"><input type="checkbox" name="_impact_report_visibility" id="_impact_report_visibility" value="1"';
-		checked( $value, 'display' );
-		echo '/> Display on Extension Impacts page</label></p>';
-	}
+		checked( get_post_meta( $post->ID, '_impact_report_visibility', true ), 'display' );
+		echo '/> <strong>Display on Extension Impacts page</strong></label></p>';
 
-	/**
-	 * PDF revision access.
-	 */
-	public function impact_report_pdf_revision( $post ) {
-		echo "<p class='description'>By default, changes published after December 31 will generate a new PDF. You can manually override this behavior and revise a previous year's PDF by selecting it below.</p>";
+		// PDF revision
+		if ( get_post_meta( $post->ID, '_impact_report_pdfs', true ) ) {
+			echo '<p><strong>Revision Access</strong><br /><span class="description">By default, changes published after December 31 will generate a new PDF. You can manually override this behavior and revise a previous year\'s PDF by selecting it below. Be sure to reset to "Current" when finished.</span></p>';
+			echo '<select name="_impact_report_pdf_revision" id="_impact_report_pdf_revision">';
+			echo '<option value="">Current</option>';
+			$pdf_meta = get_post_meta( $post->ID, '_impact_report_pdfs',true );
+			if ( $pdf_meta ) {
+				foreach ( $pdf_meta as $year => $file ) {
+					if ( (int) $year != date('Y') ) {
+						echo '<option value="' . $year . '"';
+						selected( get_post_meta( $post->ID, '_impact_report_pdf_revision', true ), $year );
+						echo '>' . $year . '</option>';
+					}
+				}
+			}
+			echo '</select>';
+		}
 	}
 
 	/**
@@ -670,7 +663,7 @@ class CAHNRSWP_Impact_Reports {
 			}
 		}
 
-		// Admin-only metas.
+		// Admin-only meta fields.
 		if ( current_user_can( 'manage_options' ) ) {
 			// Visibility.
 			if ( isset( $_POST['_impact_report_visibility'] ) && $_POST['_impact_report_visibility'] === '1' ) {
@@ -694,7 +687,14 @@ class CAHNRSWP_Impact_Reports {
 			mkdir( $upload_path, 0777, true );
 		}
 		$file = array();
-		$file['name'] = sanitize_title( get_the_title( $post_id ) ) . '-' . date('Y') . '-' . $post_id;
+		if ( isset( $_POST['_impact_report_pdf_revision'] ) && $_POST['_impact_report_pdf_revision'] != '' ) {
+			$year = $_POST['_impact_report_pdf_revision'];
+		} else if ( get_post_meta( $post->ID, '_impact_report_pdf_revision', true ) && $_POST['_impact_report_pdf_revision'] != '' ) {
+			$year = get_post_meta( $post->ID, '_impact_report_pdf_revision', true );
+		} else {
+			$year = date('Y');
+		}
+		$file['name'] = sanitize_title( get_the_title( $post_id ) ) . '-' . $year . '-' . $post_id;
 		$file['path'] = $upload_path . '/' . $file['name'] . '.pdf';
 		$file['url']  = $upload_url . '/' . $file['name'] . '.pdf';
 		require_once ( plugin_dir_path( __FILE__ ) . 'dompdf/dompdf_config.inc.php' );
@@ -706,17 +706,15 @@ class CAHNRSWP_Impact_Reports {
 			$dompdf->load_html( $html );
 			$dompdf->render();
 			$is_existing = $this->get_attachment_by_post_name( $file['name'] );
-			// Revising a PDF from a previous year
-			//if ( ( isset( $_POST['_impact_report_pdf_revision'] ) && $_POST['_impact_report_pdf_revision'] != '' ) || get_post_meta( $post->ID, '_impact_report_pdf_revision', true ) ) {}
 			if ( $is_existing ) {
-				$url = $is_existing->guid;
-				$base = explode( '/wp-content/', $url );
+				$pdf_url = $is_existing->guid;
+				$base = explode( '/wp-content/', $pdf_url );
 				$path = ABSPATH . 'wp-content/' . $base[1];
 				file_put_contents( $path, $dompdf->output() );
-				$this->add_impact_report_pdf_url_meta( $post_id, $url );
+				$this->add_impact_report_pdf_url_meta( $post_id, $pdf_url, $year );
 			} else {
 				file_put_contents( $file['path'], $dompdf->output() );
-				$this->upload_impact_report_to_library( $file, $post_id );
+				$this->upload_impact_report_to_library( $file, $post_id, $year );
 			}
 			return $file;
 		} else {
@@ -746,15 +744,15 @@ class CAHNRSWP_Impact_Reports {
 	/**
 	 * Upload generated PDF to media library.
 	 */
-	private function upload_impact_report_to_library( $file, $post_id ) {		
+	private function upload_impact_report_to_library( $file, $post_id, $year ) {		
 		$file_array = array(
 			'name' => $file['name'] . '.pdf',
 			'tmp_name' => $file['path']
 		);
 		$id = media_handle_sideload( $file_array, $post_id );
 		if ( $id ) {
-			$attach_url = wp_get_attachment_url( $id );
-			$this->add_impact_report_pdf_url_meta( $post_id, $attach_url );
+			$pdf_url = wp_get_attachment_url( $id );
+			$this->add_impact_report_pdf_url_meta( $post_id, $pdf_url, $year );
 		}
 		return true;
 	}
@@ -762,9 +760,16 @@ class CAHNRSWP_Impact_Reports {
 	/**
 	 * Add PDF url as post meta to Impact Report.
 	 */
-	private function add_impact_report_pdf_url_meta( $post_id, $pdf_url ) {
+	private function add_impact_report_pdf_url_meta( $post_id, $pdf_url, $year ) {
 		if ( $pdf_url ) {
-			update_post_meta( $post_id, '_pdf_link', $pdf_url );
+			$existing_meta = get_post_meta( $post_id, '_impact_report_pdfs', true );
+			if ( $existing_meta ) {
+				$existing_meta[$year] = $pdf_url;
+				$value = $existing_meta;
+			} else {
+				$value = array( $year => $pdf_url );
+			}
+			update_post_meta( $post_id, '_impact_report_pdfs', $value );
 		}
 	}
 
@@ -800,27 +805,12 @@ class CAHNRSWP_Impact_Reports {
 	}
 
 	/**
-	 * Register a sidebar for the Impact Report archive.
-	 */
-	public function widgets_init() {
-		register_sidebar( array(
-			'name'          => 'Impact Report Archive',
-			'id'            => 'impact-report-archive',
-			'before_widget' => '',
-			'after_widget'  => '',
-			'before_title'  => '',
-			'after_title'   => '',
-		));
-	}
-
-	/**
 	 * Enqueue the scripts and styles used on the front end.
 	 */
 	public function wp_enqueue_scripts() {
 		if ( $this->impact_report_content_type == get_post_type() ) {
-			wp_dequeue_script( 'comment-reply' );
-			//wp_enqueue_style( 'impact-report-style',  plugins_url( 'css/impact-report-style.css', __FILE__ ), array() );
-			//wp_enqueue_script( 'impact-report-script',  plugins_url( 'js/impact-report-scripts.js', __FILE__ ), array( 'jquery' ), '', true );
+			wp_enqueue_style( 'impact-report-style',  plugins_url( 'css/impact-report.css', __FILE__ ) );
+			wp_enqueue_script( 'impact-report-script',  plugins_url( 'js/impact-report.js', __FILE__ ), array( 'jquery' ), '', true );
 		}
 	}
 
