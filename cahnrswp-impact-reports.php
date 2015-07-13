@@ -137,6 +137,7 @@ class CAHNRSWP_Impact_Reports {
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ), 11 );
+		register_activation_hook( __FILE__, array( $this, 'rewrite_flush' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
@@ -260,6 +261,14 @@ class CAHNRSWP_Impact_Reports {
 	}
 
 	/**
+	 * Flush rewrites on plugin activation.
+	 */
+	public function rewrite_flush() {
+    $this->init();
+    flush_rewrite_rules();
+	}
+
+	/**
 	 * Enqueue scripts and styles for the admin interface.
 	 */
 	public function admin_enqueue_scripts( $hook ) {
@@ -295,24 +304,24 @@ class CAHNRSWP_Impact_Reports {
 	 */
 	public function impact_reports_settings_page() {
 		?>
-<div class="wrap">
-<h2>Impact Report Settings</h2>
-<form method="post" action="options.php">
-<?php settings_fields( 'impact_report_options' ); ?>
-<?php do_settings_sections( 'impact_report_options' ); ?>
-<table class="form-table">
-<tr valign="top">
-<th scope="row">Editor E-mail Address</th>
-<td><input type="text" name="impact_report_editor_email" value="<?php echo esc_attr( get_option( 'impact_report_editor_email' ) ); ?>" /></td>
-</tr>
-<tr valign="top">
-<th scope="row">Archive blurb</th>
-<td><?php wp_editor( wp_kses_post( get_option( 'impact_report_archive_blurb' ) ), 'impact_report_archive_blurb' ); ?></td>
-</tr>
-</table>
-<?php submit_button(); ?>
-</form>
-</div>
+		<div class="wrap">
+			<h2>Impact Report Settings</h2>
+			<form method="post" action="options.php">
+				<?php settings_fields( 'impact_report_options' ); ?>
+				<?php do_settings_sections( 'impact_report_options' ); ?>
+				<table class="form-table">
+					<tr valign="top">
+						<th scope="row">Editor E-mail Address</th>
+						<td><input type="text" name="impact_report_editor_email" value="<?php echo esc_attr( get_option( 'impact_report_editor_email' ) ); ?>" /></td>
+					</tr>
+					<tr valign="top">
+						<th scope="row">Archive blurb</th>
+						<td><?php wp_editor( wp_kses_post( get_option( 'impact_report_archive_blurb' ) ), 'impact_report_archive_blurb' ); ?></td>
+					</tr>
+				</table>
+				<?php submit_button(); ?>
+			</form>
+		</div>
 		<?php
 	}
 
