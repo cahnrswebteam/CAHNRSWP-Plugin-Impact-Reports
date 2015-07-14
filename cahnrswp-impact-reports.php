@@ -25,27 +25,27 @@ class CAHNRSWP_Impact_Reports {
 	 */
 	var $impact_report_meta = array(
 		'ir_image_1' => array(
-			'title' => 'front page: left column bottom image',
+			'title' => 'front page bottom left image',
 			'desc' => 'optional; at least <strong>550</strong> pixels wide',
 			'type' => 'img',
 		),
 		'ir_image_2' => array(
-			'title' => 'back page: first banner image',
+			'title' => 'back page top left image',
 			'desc'  => 'at least <strong>550 × 450</strong> pixels [wide × tall]',
 			'type'  => 'img',
 		),
 		'ir_image_3' => array(
-			'title' => 'back page: second banner image',
+			'title' => 'back page top center image',
 			'desc' => 'at least <strong>677 × 450</strong> pixels [wide × tall]',
 			'type' => 'img',
 		),
 		'ir_image_4' => array(
-			'title' => 'back page: third banner image',
+			'title' => 'back page top right image',
 			'desc' => 'at least <strong>677 × 450</strong> pixels [wide × tall]',
 			'type' => 'img',
 		),
 		'ir_image_5' => array(
-			'title' => 'back page: left column bottom image',
+			'title' => 'back page bottom left image',
 			'desc' => 'optional; at least <strong>550</strong> pixels wide',
 			'type' => 'img',
 		),
@@ -143,7 +143,6 @@ class CAHNRSWP_Impact_Reports {
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'admin_head', array( $this, 'admin_head' ) );
 		add_action( 'edit_form_after_title', array( $this, 'edit_form_after_title' ) );
-		add_action( 'edit_form_after_editor',	array( $this, 'edit_form_after_editor' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 10, 2 );
 		add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
 		add_filter( 'post_updated_messages', array( $this, 'post_updated_messages' ) );
@@ -184,8 +183,8 @@ class CAHNRSWP_Impact_Reports {
 			),
 			'taxonomies' => array(
 				$this->impact_report_programs,
-				$this->impact_report_locations,
-				$this->impact_report_categories,
+				$this->impact_report_locations, // Use University Locations instead
+				$this->impact_report_categories, // Use CAHNRS Topics instead
 			),
 			'has_archive' => true,
 			'rewrite' => array(
@@ -195,6 +194,7 @@ class CAHNRSWP_Impact_Reports {
 		);
 		register_post_type( $this->impact_report_content_type, $impact_reports );
 
+		// Use University Locations instead
 		$locations = array(
 			'labels'       => array(
 				'name'          => 'Locations',
@@ -237,6 +237,7 @@ class CAHNRSWP_Impact_Reports {
 		);
 		register_taxonomy( $this->impact_report_programs, $this->impact_report_content_type, $programs );
 
+		// Use CAHNRS Topics instead
 		$categories = array(
 			'labels'        => array(
 				'name'          => 'Categories',
@@ -356,7 +357,7 @@ class CAHNRSWP_Impact_Reports {
 			$screen->add_help_tab( array(
 				'id'			=> 'impact_report_images',
 				'title'	  => 'Images',
-				'content' => '<p>Each impact report can feature four images, with the option for one additional image. All images must meet minimum size requirements in order to produce high-quality print results. Images that are not proportional to the required dimensions may be used, but will be automatically cropped, which may yield undesirable results in some cases.</p><p>Front Page</p><p style="padding-left:30px;">The <em>Featured Image</em> is displayed next to the logo at the top of the front page, and should be at least 1370 × 450 pixels (wide × tall).</p><p style="padding-left:30px;">The <em>Bottom Left Column Image</em> is optional. It should be at least 550 pixels wide. There is no height restriction, but note that using an image here will limit the amount of space that is available for “By the Numbers” text, above it.</p><p>Back Page</p><p style="padding-left:30px;">The <em>First Banner Image</em> should be at least 550 × 450 pixels (wide × tall).</p><p style="padding-left:30px;">Both the <em>Second Banner Image</em> and <em>Third Banner Image</em> should be at least 677 × 450 pixels (wide × tall).</p><p><strong>Images that do not meet the minimum size requirements will not display.</strong></p>',
+				'content' => '<p>Each impact report can feature four images, with the option for one additional image. All images must meet minimum size requirements in order to produce high-quality print results. Images that are not proportional to the required dimensions may be used, but will be automatically cropped, which may yield undesirable results in some cases.</p><p>Front Page</p><p style="padding-left:30px;">The <em>Featured Image</em> is displayed next to the logo at the top of the front page, and should be at least 1370 × 450 pixels (wide × tall).</p><p style="padding-left:30px;">The bottom left image is optional. It should be at least 550 pixels wide. There is no height restriction, but note that using an image here will limit the amount of space that is available for “By the Numbers” text, above it.</p><p>Back Page</p><p style="padding-left:30px;">The top left image should be at least 550 × 450 pixels (wide × tall).</p><p style="padding-left:30px;">Both the top center and top right images should be at least 677 × 450 pixels (wide × tall).</p><p><strong>Images that do not meet the minimum size requirements will not display.</strong></p>',
 			) );
 
 			$screen->add_help_tab( array(
@@ -411,21 +412,12 @@ class CAHNRSWP_Impact_Reports {
 	 * @param WP_Post $post
 	 */
 	public function edit_form_after_title( $post ) {
-		if ( $this->impact_report_content_type === $post->post_type ) {
-			do_meta_boxes( get_current_screen(), 'after_title', $post );
-		}
-	}
-
-	/**
-	 * Add the wp_editors.
-	 *
-	 * @param WP_Post $post
-	 */
-	public function edit_form_after_editor( $post ) {
 
 		if ( $this->impact_report_content_type !== $post->post_type ) {
 			return;
 		}
+		
+		do_meta_boxes( get_current_screen(), 'after_title', $post );
 
 		$issue_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_ir_issue', true ) ) );
 		$response_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_ir_response', true ) ) );
@@ -567,7 +559,7 @@ class CAHNRSWP_Impact_Reports {
 	}
 
 	/**
-	 * Visibility options.
+	 * Editorial management options.
 	 */
 	public function impact_report_editor_options( $post ) {
 		// Visibility
@@ -575,19 +567,17 @@ class CAHNRSWP_Impact_Reports {
 		checked( get_post_meta( $post->ID, '_impact_report_visibility', true ), 'display' );
 		echo '/> <strong>Display on Extension Impacts page</strong></label></p>';
 
-		// PDF revision
-		if ( get_post_meta( $post->ID, '_impact_report_pdfs', true ) ) {
-			echo '<p><strong>Revision Access</strong><br /><span class="description">By default, changes published after December 31 will generate a new PDF. You can manually override this behavior and revise a previous year\'s PDF by selecting it below. Be sure to reset to "Current" when finished.</span></p>';
+		// PDF revision - display only if report has more than one PDF.
+		$pdf_meta = get_post_meta( $post->ID, '_impact_report_pdfs',true );
+		if ( $pdf_meta && ( count( $pdf_meta )  > 1 ) ) {
+			echo '<p><strong>Revision Access</strong><br /><span class="description">By default, changes published after December 31 will generate a new PDF. You can override this behavior and revise a previous year\'s PDF by selecting it below. Be sure to reset to "Current" when finished.</span></p>';
 			echo '<select name="_impact_report_pdf_revision" id="_impact_report_pdf_revision">';
 			echo '<option value="">Current</option>';
-			$pdf_meta = get_post_meta( $post->ID, '_impact_report_pdfs',true );
-			if ( $pdf_meta ) {
-				foreach ( $pdf_meta as $year => $file ) {
-					if ( (int) $year != date('Y') ) {
-						echo '<option value="' . $year . '"';
-						selected( get_post_meta( $post->ID, '_impact_report_pdf_revision', true ), $year );
-						echo '>' . $year . '</option>';
-					}
+			foreach ( $pdf_meta as $year => $file ) {
+				if ( (int) $year != date('Y') ) {
+					echo '<option value="' . $year . '"';
+					selected( get_post_meta( $post->ID, '_impact_report_pdf_revision', true ), $year );
+					echo '>' . $year . '</option>';
 				}
 			}
 			echo '</select>';
@@ -703,7 +693,7 @@ class CAHNRSWP_Impact_Reports {
 		} else {
 			$year = date('Y');
 		}
-		$file['name'] = sanitize_title( get_the_title( $post_id ) ) . '-' . $year . '-' . $post_id;
+		$file['name'] = apply_filters( 'the_slug', basename( get_permalink( get_the_ID() ) ) ) . '-' . $year;
 		$file['path'] = $upload_path . '/' . $file['name'] . '.pdf';
 		$file['url']  = $upload_url . '/' . $file['name'] . '.pdf';
 		require_once ( plugin_dir_path( __FILE__ ) . 'dompdf/dompdf_config.inc.php' );
@@ -821,6 +811,9 @@ class CAHNRSWP_Impact_Reports {
 			wp_enqueue_style( 'impact-report-style',  plugins_url( 'css/impact-report.css', __FILE__ ) );
 			wp_enqueue_script( 'impact-report-script',  plugins_url( 'js/impact-report.js', __FILE__ ), array( 'jquery' ), '', true );
 		}
+		if ( is_post_type_archive( $this->impact_report_content_type ) || ( $this->impact_report_content_type === get_post_type() && is_archive() ) ) {
+			wp_enqueue_style( 'impact-report-archive-style',  plugins_url( 'css/impact-report-archive.css', __FILE__ ) );
+		}
 	}
 
 	/**
@@ -834,7 +827,6 @@ class CAHNRSWP_Impact_Reports {
 		if ( $this->impact_report_content_type == get_post_type() ) {
 			$template = plugin_dir_path( __FILE__ ) . 'templates/single.php';
 		}
-		//if ( is_post_type_archive( $this->impact_report_content_type ) || is_tax( $this->impact_report_locations ) || is_tax( $this->impact_report_programs ) ) {
 		if ( is_post_type_archive( $this->impact_report_content_type ) || ( $this->impact_report_content_type === get_post_type() && is_archive() ) ) {
 			$template = plugin_dir_path( __FILE__ ) . 'templates/archive.php';
 		}
@@ -842,6 +834,20 @@ class CAHNRSWP_Impact_Reports {
 			$template = plugin_dir_path( __FILE__ ) . 'templates/image-resized.php';
 		}
 		return $template;
+	}
+
+	/**
+	 * Image processing for PDF output.
+	 */
+	public function process_image_for_pdf( $image, $width, $height, $class, $style ) {
+		$height_param = ( $height !== false ) ? '&height=' . $height : '';
+		$class = ( $class !== false ) ? ' class="' . $class . '"' : '';
+		$style = ( $style !== false ) ? ' style="' . $style . '"' : '';
+		if ( $image[1] === $width && $image[2] === $height ) {
+			echo '<img src="' . $image[0] . '"' . $class . $style . ' />';
+		} else if ( $image[1] >= $width && $image[2] >= $height ) {
+			echo '<img src="' . get_home_url() . '/?resized&width=' . $width . $height_param . '&img=' . $image[0] . '"' . $class . $style . ' />';
+		}
 	}
 
 }

@@ -1,15 +1,5 @@
 <?php
-function cahnrs_impact_report_process_pdf_image( $image, $width, $height, $class, $style ) {
-	$height_param = ( $height !== false ) ? '&height=' . $height : '';
-	$class = ( $class !== false ) ? ' class="' . $class . '"' : '';
-	$style = ( $style !== false ) ? ' style="' . $style . '"' : '';
-	if ( $image[1] === $width && $image[2] === $height ) {
-		echo '<img src="' . $image[0] . '"' . $class . $style . ' />';
-	} else if ( $image[1] >= $width && $image[2] >= $height ) {
-		echo '<img src="' . get_home_url() . '/?resized&width=' . $width . $height_param . '&img=' . $image[0] . '"' . $class . $style . ' />';
-	}
-}
-
+$cahnrswp_impact_reports = new CAHNRSWP_Impact_Reports();
 $report_query = new WP_Query( 'p=' . $post_id . '&post_type=impact' );
 if ( $report_query->have_posts() ) :
 	while ( $report_query->have_posts() ) :
@@ -32,7 +22,7 @@ if ( $report_query->have_posts() ) :
 			<?php
       	// Featured Image
 				if ( has_post_thumbnail() ) {
-					cahnrs_impact_report_process_pdf_image( wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' ), 1370, 450, false, false );
+					$cahnrswp_impact_reports->process_image_for_pdf( wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' ), 1370, 450, false, false );
 				}
 			?>
 		</div>
@@ -110,7 +100,7 @@ if ( $report_query->have_posts() ) :
 					$proportion = 222 / $image[1];
 					$margin = round( ( $proportion * $image[2] ) + 7 );
 				}
-				cahnrs_impact_report_process_pdf_image( $image, 550, false, 'bottom-left-image', 'top: -' . $margin . 'px;' );
+				$cahnrswp_impact_reports->process_image_for_pdf( $image, 550, false, 'bottom-left-image', 'top: -' . $margin . 'px;' );
 			}
 		?>
 
@@ -140,7 +130,7 @@ if ( $report_query->have_posts() ) :
 				$back_top_left = get_post_meta( $post_id, '_ir_image_2', true );
 				if ( $back_top_left ) {
 					$image = explode( '$S$', $back_top_left );
-					cahnrs_impact_report_process_pdf_image( wp_get_attachment_image_src( $image[0], 'full' ), 550, 450, false, false );
+					$cahnrswp_impact_reports->process_image_for_pdf( wp_get_attachment_image_src( $image[0], 'full' ), 550, 450, false, false );
 				}
 			?>
 		</div>
@@ -150,15 +140,15 @@ if ( $report_query->have_posts() ) :
       	// Second page top center image
 				$back_top_center = get_post_meta( $post_id, '_ir_image_3', true );
 				if ( back_top_center ) {
-					$image = explode( '$S$', back_top_center );
-					cahnrs_impact_report_process_pdf_image( wp_get_attachment_image_src( $image[0], 'full' ), 667, 450, false, false );
+					$image = explode( '$S$', $back_top_center );
+					$cahnrswp_impact_reports->process_image_for_pdf( wp_get_attachment_image_src( $image[0], 'full' ), 667, 450, false, false );
 				}
 
 				// Second page top right image
 				$back_top_right = get_post_meta( $post_id, '_ir_image_4', true );
 				if ( $back_top_right ) {
 					$image = explode( '$S$', $back_top_right );
-					cahnrs_impact_report_process_pdf_image( wp_get_attachment_image_src( $image[0], 'full' ), 667, 450, false, false );
+					$cahnrswp_impact_reports->process_image_for_pdf( wp_get_attachment_image_src( $image[0], 'full' ), 667, 450, false, false );
 				}
 			?>
 		</div>
@@ -222,7 +212,7 @@ if ( $report_query->have_posts() ) :
 					$proportion = 222 / $image[1];
 					$margin = round( ( $proportion * $image[2] ) + 7 );
 				}
-				cahnrs_impact_report_process_pdf_image( $image, 550, false, 'bottom-left-image', 'top: -' . $margin . 'px;' );
+				$cahnrswp_impact_reports->process_image_for_pdf( $image, 550, false, 'bottom-left-image', 'top: -' . $margin . 'px;' );
 			}
 
 			// Logo
