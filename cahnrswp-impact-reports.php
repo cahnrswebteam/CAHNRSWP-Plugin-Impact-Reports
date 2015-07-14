@@ -693,7 +693,7 @@ class CAHNRSWP_Impact_Reports {
 		} else {
 			$year = date('Y');
 		}
-		$file['name'] = apply_filters( 'the_slug', basename( get_permalink( get_the_ID() ) ) ) . '-' . $year;
+		$file['name'] = apply_filters( 'the_slug', get_post( $post_id )->post_name ) . '-' . $year;
 		$file['path'] = $upload_path . '/' . $file['name'] . '.pdf';
 		$file['url']  = $upload_url . '/' . $file['name'] . '.pdf';
 		require_once ( plugin_dir_path( __FILE__ ) . 'dompdf/dompdf_config.inc.php' );

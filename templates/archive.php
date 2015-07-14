@@ -37,7 +37,6 @@
 							if ( $summary ) {
 								echo wpautop( wp_kses_post( $summary ) );
 							}
-							echo $post->post_name;
 						?>
 					</div>
 

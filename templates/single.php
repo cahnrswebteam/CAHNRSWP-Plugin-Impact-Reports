@@ -34,7 +34,7 @@
     	</div>
 
 			<div class="column two">
-    		<?php 
+    		<?php
 					$pdf_meta = get_post_meta( get_the_ID(), '_impact_report_pdfs', true );
 					if ( $pdf_meta ) {
 						foreach ( $pdf_meta as $year => $file ) {
