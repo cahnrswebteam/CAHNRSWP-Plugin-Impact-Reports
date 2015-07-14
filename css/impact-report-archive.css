@@ -1,0 +1,9 @@
+.article-header hgroup.source time {
+	font-size: 0.75rem;
+}
+article header time:before {
+	content: "Published ";
+}
+article header time:last-of-type:before {
+	content: "Last Updated ";
+}

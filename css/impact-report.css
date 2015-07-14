@@ -36,3 +36,16 @@
 #impact-report-pdf-archive dt h2:hover {
 	color: #c60c30;
 }
+.row.thirds img {
+	display: block;
+	margin: 0 auto;
+}
+
+@media only screen and (max-width:693px) {
+	.single-impact .hybrid .row.thirds .column,
+	.single-impact .hybrid .row.thirds .column.two {
+		clear: none;
+		width: 33.33333%;
+		float: left;
+	}
+}

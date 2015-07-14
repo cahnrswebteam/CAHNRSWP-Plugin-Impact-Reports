@@ -4,6 +4,8 @@
 
 	<?php get_template_part('parts/headers'); ?>
 
+	<?php while ( have_posts() ) : the_post(); ?>
+
 	<?php if ( spine_has_featured_image() ) {
 		$featured_image_src = spine_get_featured_image_src(); ?>
 		<figure class="featured-image" style="background-image: url('<?php echo $featured_image_src; ?>');">
@@ -11,178 +13,212 @@
 		</figure>
 	<?php } ?>
 
-	<section class="row side-right gutter pad-ends">
+	<div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
-		<div class="column one">
+		<section class="row side-right gutter pad-top">
 
-			<?php while ( have_posts() ) : the_post(); ?>
-
-				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-
-					<header class="article-header">
-						<hgroup>
-							<!--<h1 class="article-title"><?php the_title(); ?></h1>-->
-							<?php
-								$subtitle = get_post_meta( get_the_ID(), '_ir_subtitle', true );
-      					if ( $subtitle ) {
-        					echo '<h2 class="article-subtitle">' . esc_html( $subtitle ) . '</h2>';
-								}
-							?>
-						</hgroup>
-						<hgroup class="source">
-							<time class="article-date" datetime="<?php echo get_the_date( 'c' ); ?>"><?php echo get_the_date(); ?></time>
-						</hgroup>
-					</header>
-
-					<!--<p class="quicklinks">Jump to: <a href="#issue">Issue</a> | <a href="#response">Response</a> | <a href="#impacts">Impacts</a></p>-->
-
-					<div class="article-body">
-
-						<?php 
-        			$headline = get_post_meta( get_the_ID(), '_ir_headline', true );
-        			if ( $headline ) {
-          			$long = ( strlen( $headline ) > 111 ) ? ' class="long"' : '';
-            			echo '<h2' . $long . '>' . esc_html( $headline ) . '</h2>';
-        			}
-      			?>
-
-      			<h4 id="issue">Issue</h4>
-      			<?php
-        			$issue = get_post_meta( get_the_ID(), '_ir_issue', true );
-        			if ( $issue ) {
-          			echo wpautop( wp_kses_post( $issue ) );
-							}
-      			?>
-
-						<h4 id="response">Response</h4>
+			<div class="column one">
+    		<header class="article-header">
+					<hgroup>
 						<?php
-							$response = get_post_meta( get_the_ID(), '_ir_response', true );
-							if ( $response ) {
-								echo wpautop( wp_kses_post( str_replace( '<!--more-->', '', $response ) ) );
+							$subtitle = get_post_meta( get_the_ID(), '_ir_subtitle', true );
+      				if ( $subtitle ) {
+       					echo '<h2 class="article-subtitle">' . esc_html( $subtitle ) . '</h2>';
 							}
 						?>
+					</hgroup>
+					<hgroup class="source">
+						<time class="article-date" datetime="<?php echo get_the_date( 'c' ); ?>"><?php echo get_the_date(); ?></time>
+					</hgroup>
+				</header>
+    	</div>
 
-						<h4 id="impacts">Impacts</h4>
-      			<?php
-							$impacts = get_post_meta( get_the_ID(), '_ir_impacts', true );
-							if ( $impacts ) {
-								echo wpautop( wp_kses_post( str_replace( '<!--more-->', '', $impacts ) ) );
+			<div class="column two">
+    		<?php 
+					$pdf_meta = get_post_meta( get_the_ID(), '_impact_report_pdfs', true );
+					if ( $pdf_meta ) {
+						foreach ( $pdf_meta as $year => $file ) {
+							if ( date('Y') == (int) $year ) {
+								echo '<h2 id="impact-report-pdf"><a href="' . $file . '">Print Version (PDF) &raquo;</a></h2>';
+								unset( $pdf_meta[date('Y')] );
 							}
-						?>
-
-					</div>
-
-				</article>
-
-			<?php endwhile; ?>
-
-		</div><!--/column-->
-
-		<div class="column two">
-
-			<?php 
-				$pdf_meta = get_post_meta( get_the_ID(), '_impact_report_pdfs', true );
-				if ( $pdf_meta ) {
-					foreach ( $pdf_meta as $year => $file ) {
-						if ( date('Y') == (int) $year ) {
-							echo '<h2 id="impact-report-pdf"><a href="' . $file . '">Print Version (PDF) &raquo;</a></h2>';
-							unset( $pdf_meta[date('Y')] );
 						}
 					}
-				}
-				if ( $pdf_meta ) {
-					?>
-					<dl id="impact-report-pdf-archive">
-						<dt>
-							<h2>PDF Archive</h2>
-						</dt>
-						<dd>
-							<ul>
-							<?php
-								foreach ( $pdf_meta as $year => $file ) {
-									echo '<li><a href="' . $file . '">' . $year . '</a></li>';
-								}
-							?>
-							</ul>
-						</dd>
-					</dl>
-					<?php
-				}
-			?>
+					if ( $pdf_meta ) {
+						?>
+						<dl id="impact-report-pdf-archive">
+							<dt>
+								<h2>PDF Archive</h2>
+							</dt>
+							<dd>
+								<ul>
+								<?php
+									foreach ( $pdf_meta as $year => $file ) {
+										echo '<li><a href="' . $file . '">' . $year . '</a></li>';
+									}
+								?>
+								</ul>
+							</dd>
+						</dl>
+						<?php
+					}
+				?>
+	    </div>
 
-			<h4 id="numbers">By the numbers</h4>
-      <?php
-        $numbers = get_post_meta( get_the_ID(), '_ir_numbers', true );
-        if ( $numbers ) {
-          echo wpautop( wp_kses_post( $numbers ) );
-				}
-      ?>
+		</section>
+
+		<section class="row side-right gutter pad-bottom">
+
+			<div class="column one">
+
+				<?php 
+					// Headline.
+					$headline = get_post_meta( get_the_ID(), '_ir_headline', true );
+					if ( $headline ) {
+						echo '<h2>' . esc_html( $headline ) . '</h2>';
+					}
+
+					// Issue.
+					$issue = get_post_meta( get_the_ID(), '_ir_issue', true );
+					if ( $issue ) {
+						echo '<h4 id="issue">Issue</h4>';
+						echo wpautop( wp_kses_post( $issue ) );
+					}
+
+					// Response.
+					$response = get_post_meta( get_the_ID(), '_ir_response', true );
+					if ( $response ) {
+						echo '<h4 id="response">Response</h4>';
+						echo wpautop( wp_kses_post( str_replace( '<!--more-->', '', $response ) ) );
+					}
+				?>
+
+			</div><!--/column-->
+
+			<div class="column two">
+
+    	  <?php
+					// By the Numbers.
+        	$numbers = get_post_meta( get_the_ID(), '_ir_numbers', true );
+					echo '<h4 id="numbers">By the numbers</h4>';
+      	  if ( $numbers ) {
+        	  echo wpautop( wp_kses_post( $numbers ) );
+					}
+
+					// Front bottom left image.
+					$front_bottom_left = get_post_meta( $post->ID, '_ir_image_1', true );
+					if ( $front_bottom_left ) {
+						$img_array = explode( '$S$', $front_bottom_left );
+						$image = wp_get_attachment_image_src( $img_array[0], 'medium' );
+						echo '<img src="' . $image[0] . '" width="' . $image[1] . '" height="' . $image[2] . '" />';
+					}
+				?>
+
+			</div>
+
+		</section>
+
+		<section class="row thirds gutter">
 
 			<?php
-				$back_page_left = get_post_meta( $post->ID, '_ir_image_2', true );
-				if ( $back_page_left ) {
-					$img_array = explode( '$S$', $back_page_left );
-					$image = wp_get_attachment_image_src( $img_array[0], 'medium' );
-					echo '<img src="' . $image[0] . '" alt="" height="182" width="219" />';
-				}
-				
-				$back_page_right_one = get_post_meta( $post->ID, '_ir_image_3', true );
-				if ( $back_page_right_one ) {
-					$img_array = explode( '$S$', $back_page_right_one );
-					$image = wp_get_attachment_image_src( $img_array[0], 'medium' );
-					echo '<img src="' . $image[0] . '" alt="" height="147" width="219" />';
+				// Back page top left image.
+				$back_top_left = get_post_meta( $post->ID, '_ir_image_2', true );
+				if ( $back_top_left ) {
+					$img_array = explode( '$S$', $back_top_left );
+					$image = wp_get_attachment_image_src( $img_array[0], 'thumbnail' );
+					echo '<div class="column one"><img src="' . $image[0] . '" width="' . $image[1] . '" height="' . $image[2] . '" /></div>';
 				}
 
-				$back_page_right_two = get_post_meta( $post->ID, '_ir_image_4', true );
-				if ( $back_page_right_two ) {
-					$img_array = explode( '$S$', $back_page_right_two );
-					$image = wp_get_attachment_image_src( $img_array[0], 'medium' );
-					echo '<img src="' . $image[0] . '" alt="" height="147" width="219" />';
+				// Back page top center image.		
+				$back_top_center = get_post_meta( $post->ID, '_ir_image_3', true );
+				if ( $back_top_center ) {
+					$img_array = explode( '$S$', $back_top_center );
+					$image = wp_get_attachment_image_src( $img_array[0], 'thumbnail' );
+					echo '<div class="column two"><img src="' . $image[0] . '" width="' . $image[1] . '" height="' . $image[2] . '" /></div>';
+				}
+
+				// Back page top right image.
+				$back_top_right = get_post_meta( $post->ID, '_ir_image_4', true );
+				if ( $back_top_right ) {
+					$img_array = explode( '$S$', $back_top_right );
+					$image = wp_get_attachment_image_src( $img_array[0], 'thumbnail' );
+					echo '<div class="column three"><img src="' . $image[0] . '" width="' . $image[1] . '" height="' . $image[2] . '" /></div>';
 				}
 			?>
 
-      <h4 id="quotes">Quotes</h4>
-      <?php
-        $quotes = get_post_meta( get_the_ID(), '_ir_quotes', true );
-        if ( $quotes ) {
-          echo wpautop( wp_kses_post( $quotes ) );
-				}
-      ?>
+		</section>
 
-      <?php
-        $additional_title = get_post_meta( get_the_ID(), '_ir_additional_title', true );
-        $additional = get_post_meta( get_the_ID(), '_ir_additional', true );
-        if ( $additional_title && $additional ) {
-          echo '<h4>' . esc_html( $additional_title ) . '</h4>';
-          echo wpautop( wp_kses_post( $additional ) );
-        }
-      ?>
+		<section class="row side-right gutter pad-ends">
+
+			<div class="column one">
+
+				<?php
+					// Impacts.
+					$impacts = get_post_meta( get_the_ID(), '_ir_impacts', true );
+					if ( $impacts ) {
+						echo '<h4 id="impacts">Impacts</h4>';
+						echo wpautop( wp_kses_post( str_replace( '<!--more-->', '', $impacts ) ) );
+					}
+				?>
+
+			</div>
+
+			<div class="column two">
+
+      	<?php
+					// Quotes.
+					$quotes = get_post_meta( get_the_ID(), '_ir_quotes', true );
+					if ( $quotes ) {
+						echo '<h4 id="quotes">Quotes</h4>';
+						echo wpautop( wp_kses_post( $quotes ) );
+					}
+
+					// Additional content.
+					$additional_title = get_post_meta( get_the_ID(), '_ir_additional_title', true );
+					$additional = get_post_meta( get_the_ID(), '_ir_additional', true );
+					if ( $additional_title && $additional ) {
+						echo '<h4>' . esc_html( $additional_title ) . '</h4>';
+						echo wpautop( wp_kses_post( $additional ) );
+					}
+
+					// Back page bottom left image.
+					$back_bottom_left = get_post_meta( $post->ID, '_ir_image_5', true );
+					if ( $back_bottom_left ) {
+						$img_array = explode( '$S$', $back_bottom_left );
+						$image = wp_get_attachment_image_src( $img_array[0], 'medium' );
+						echo '<img src="' . $image[0] . '" width="' . $image[1] . '" height="' . $image[2] . '" />';
+					}
+				?>
 
 		</div><!--/column two-->
 
-	</section>
+		</section>
 
-	<section class="row single gutter pad-ends">
+		<section class="row single gutter pad-ends">
 
-		<div class="column one">
+			<div class="column one">
 
-			<?php
-				$footer_front = get_post_meta( get_the_ID(), '_ir_footer_front', true );
-				if ( $footer_front ) {
-					echo wpautop( wp_kses_post ( $footer_front ) );
-				}
-			?>
-	
-			<?php
-				$footer_back = get_post_meta( get_the_ID(), '_ir_footer_back', true );
-				if ( $footer_back ) {
-					echo wpautop( wp_kses_post( $footer_back ) );
-				}
-			?>
+				<?php
+					// Front footer.
+					$footer_front = get_post_meta( get_the_ID(), '_ir_footer_front', true );
+					if ( $footer_front ) {
+						echo wpautop( wp_kses_post ( $footer_front ) );
+					}
 
-		</div>
+					// Back footer.
+					$footer_back = get_post_meta( get_the_ID(), '_ir_footer_back', true );
+					if ( $footer_back ) {
+						echo wpautop( wp_kses_post( $footer_back ) );
+					}
+				?>
 
-	</section>
+			</div>
+
+		</section>
+
+	</div>
+
+<?php endwhile; ?>
 
 </main>
 
