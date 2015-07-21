@@ -14,11 +14,9 @@ class CAHNRSWP_Impact_Reports {
 	var $impact_report_content_type = 'impact';
 
 	/**
-	 * @var string: Custom taxonomy slugs.
+	 * @var string: "Programs" taxonomy slug.
 	 */
-	var $impact_report_locations = 'locations';
 	var $impact_report_programs = 'programs';
-	var $impact_report_categories = 'categories';
 
 	/**
 	 * @var array: Custom field details.
@@ -137,6 +135,7 @@ class CAHNRSWP_Impact_Reports {
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ), 11 );
+		add_action( 'init', array( $this, 'add_taxonomies' ), 12 );
 		register_activation_hook( __FILE__, array( $this, 'rewrite_flush' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
@@ -183,8 +182,6 @@ class CAHNRSWP_Impact_Reports {
 			),
 			'taxonomies' => array(
 				$this->impact_report_programs,
-				$this->impact_report_locations, // Use University Locations instead
-				$this->impact_report_categories, // Use CAHNRS Topics instead
 			),
 			'has_archive' => true,
 			'rewrite' => array(
@@ -193,28 +190,6 @@ class CAHNRSWP_Impact_Reports {
 			),
 		);
 		register_post_type( $this->impact_report_content_type, $impact_reports );
-
-		// Use University Locations instead
-		$locations = array(
-			'labels'       => array(
-				'name'          => 'Locations',
-				'singular_name' => 'Location',
-				'search_items'  => 'Search Locations',
-				'all_items'     => 'All Locations',
-				'edit_item'     => 'Edit Location',
-				'update_item'   => 'Update Location',
-				'add_new_item'  => 'Add New Location',
-				'new_item_name' => 'New Location Name',
-				'menu_name'     => 'Locations',
-			),
-			'description'  => 'Impact Report Locations',
-			'public'       => true,
-			'hierarchical' => true,
-			'show_ui'      => true,
-			'show_in_menu' => true,
-			'query_var'    => $this->impact_report_locations,
-		);
-		register_taxonomy( $this->impact_report_locations, $this->impact_report_content_type, $locations );
 
 		$programs = array(
 			'labels'        => array(
@@ -237,28 +212,14 @@ class CAHNRSWP_Impact_Reports {
 		);
 		register_taxonomy( $this->impact_report_programs, $this->impact_report_content_type, $programs );
 
-		// Use CAHNRS Topics instead
-		$categories = array(
-			'labels'        => array(
-				'name'          => 'Categories',
-				'singular_name' => 'Category',
-				'search_items'  => 'Search Categories',
-				'all_items'     => 'All Categories',
-				'edit_item'     => 'Edit Category',
-				'update_item'   => 'Update Category',
-				'add_new_item'  => 'Add New Category',
-				'new_item_name' => 'New Category Name',
-				'menu_name'     => 'Categories',
-			),
-			'description'   => 'Impact Report Categories',
-			'public'        => true,
-			'hierarchical'  => true,
-			'show_ui'       => true,
-			'show_in_menu'  => true,
-			'query_var'     => $this->impact_report_categories,
-		);
-		register_taxonomy( $this->impact_report_categories, $this->impact_report_content_type, $categories );
+	}
 
+	/**
+	 * Add support for CAHNRS Topics and WSU University Locations.
+	 */
+	public function add_taxonomies() {
+		register_taxonomy_for_object_type( 'topic', $this->impact_report_content_type );
+		register_taxonomy_for_object_type( 'wsuwp_university_location', $this->impact_report_content_type );
 	}
 
 	/**
