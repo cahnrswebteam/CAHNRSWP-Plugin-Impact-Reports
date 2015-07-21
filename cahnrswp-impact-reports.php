@@ -257,7 +257,7 @@ class CAHNRSWP_Impact_Reports {
 	 */
 	public function admin_init() {
 		register_setting( 'impact_report_options', 'impact_report_editor_email' );
-		register_setting( 'impact_report_options', 'impact_report_archive_blurb' );
+		register_setting( 'impact_report_options', 'impact_report_archive_text' );
 		add_filter( 'mce_external_plugins', array( $this, 'mce_external_plugins' ) );
 	}
 
@@ -277,8 +277,8 @@ class CAHNRSWP_Impact_Reports {
 						<td><input type="text" name="impact_report_editor_email" value="<?php echo esc_attr( get_option( 'impact_report_editor_email' ) ); ?>" /></td>
 					</tr>
 					<tr valign="top">
-						<th scope="row">Archive blurb</th>
-						<td><?php wp_editor( wp_kses_post( get_option( 'impact_report_archive_blurb' ) ), 'impact_report_archive_blurb' ); ?></td>
+						<th scope="row">Archive Introductory Text</th>
+						<td><?php wp_editor( wp_kses_post( get_option( 'impact_report_archive_text' ) ), 'impact_report_archive_text' ); ?></td>
 					</tr>
 				</table>
 				<?php submit_button(); ?>
