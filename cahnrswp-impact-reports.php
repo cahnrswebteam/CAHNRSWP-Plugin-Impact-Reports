@@ -778,7 +778,7 @@ class CAHNRSWP_Impact_Reports {
 	}
 
 	/**
-	 * Add templates for the Personnel custom content type.
+	 * Add templates for the Impact Reports content type.
 	 *
 	 * @param string $template
 	 *
