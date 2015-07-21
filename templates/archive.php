@@ -70,14 +70,14 @@
 			<h4>Browse by Location</h4>
 
       <?php
-				$locations = get_terms( 'locations' );
-				$location_count = count( $locations );
+				$locations = get_terms( 'wsuwp_university_location' );
+				//$location_count = count( $locations );
 
 				echo '<ul>';
 				foreach ( $locations as $location ) {
 
-					$location = sanitize_term( $location, 'locations' );
-    			$location_link = get_term_link( $location, 'locations' );
+					$location = sanitize_term( $location, 'wsuwp_university_location' );
+    			$location_link = get_term_link( $location, 'wsuwp_university_location' );
 
 					//echo '<li><a href="' . esc_url( $location_link ) . '">' . $location->name . '</a> (' . $location->count . ')</li>';
 					echo '<li><a href="' . esc_url( $location_link ) . '">' . $location->name . '</a></li>';
