@@ -179,6 +179,7 @@ class CAHNRSWP_Impact_Reports {
 				'editor',
 				'thumbnail',
 				'revisions',
+				'author',
 			),
 			'taxonomies' => array(
 				$this->impact_report_programs,
