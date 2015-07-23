@@ -34,35 +34,32 @@
     	</div>
 
 			<div class="column two">
-    		<?php
-					$pdf_meta = get_post_meta( get_the_ID(), '_impact_report_pdfs', true );
-					if ( $pdf_meta ) {
-						foreach ( $pdf_meta as $year => $file ) {
-							if ( date('Y') == (int) $year ) {
-								echo '<h2 id="impact-report-pdf"><a href="' . $file . '">Print Version (PDF) &raquo;</a></h2>';
-								unset( $pdf_meta[date('Y')] );
-							}
-						}
-					}
-					if ( $pdf_meta ) {
-						?>
-						<dl id="impact-report-pdf-archive">
-							<dt>
-								<h2>PDF Archive</h2>
-							</dt>
-							<dd>
-								<ul>
-								<?php
-									foreach ( $pdf_meta as $year => $file ) {
-										echo '<li><a href="' . $file . '">' . $year . '</a></li>';
-									}
-								?>
-								</ul>
-							</dd>
-						</dl>
-						<?php
-					}
-				?>
+    		<?php 
+				$pdf_meta = get_post_meta( get_the_ID(), '_impact_report_pdfs', true );
+				if ( $pdf_meta ) {
+					$most_recent = max( array_keys( $pdf_meta ) );
+					echo '<h2 id="impact-report-pdf"><a href="' . $pdf_meta[ $most_recent ] . '">Print Version (PDF) &raquo;</a></h2>';
+					unset( $pdf_meta[$most_recent] );
+				}
+				if ( $pdf_meta ) {
+					?>
+					<dl id="impact-report-pdf-archive">
+						<dt>
+							<h2>PDF Archive</h2>
+						</dt>
+						<dd>
+							<ul>
+							<?php
+								foreach ( $pdf_meta as $year => $file ) {
+									echo '<li><a href="' . $file . '">' . $year . '</a></li>';
+								}
+							?>
+							</ul>
+						</dd>
+					</dl>
+					<?php
+				}
+			?>
 	    </div>
 
 		</section>
