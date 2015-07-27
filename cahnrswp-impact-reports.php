@@ -145,6 +145,7 @@ class CAHNRSWP_Impact_Reports {
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 10, 2 );
 		add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
 		add_filter( 'post_updated_messages', array( $this, 'post_updated_messages' ) );
+		add_filter( 'transition_post_status', array( $this, 'transition_post_status' ), 10, 3 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
 		$this->impact_report_editor = get_option( 'impact_report_editor_email' );
@@ -227,8 +228,10 @@ class CAHNRSWP_Impact_Reports {
 	 * Flush rewrites on plugin activation.
 	 */
 	public function rewrite_flush() {
-    $this->init();
-    flush_rewrite_rules();
+
+		$this->init();
+		flush_rewrite_rules();
+
 	}
 
 	/**
@@ -624,23 +627,23 @@ class CAHNRSWP_Impact_Reports {
 			}
 		}
 
-		// Admin-only meta fields.
-		if ( current_user_can( 'manage_options' ) ) {
+		// Editor-only meta fields.
+		if ( current_user_can( 'edit_pages' ) ) {
 			// Visibility.
-			if ( isset( $_POST['_impact_report_visibility'] ) && $_POST['_impact_report_visibility'] === '1' ) {
+			if ( isset( $_POST['_impact_report_visibility'] ) && '1' === $_POST['_impact_report_visibility'] ) {
 				update_post_meta( $post_id, '_impact_report_visibility', 'display' );
 			} else {
 				delete_post_meta( $post_id, '_impact_report_visibility' );
 			}
 			// PDF revision
-			if ( isset( $_POST['_impact_report_pdf_revision'] ) && $_POST['_impact_report_pdf_revision'] != '' ) {
+			if ( isset( $_POST['_impact_report_pdf_revision'] ) && '' != $_POST['_impact_report_pdf_revision'] ) {
 				update_post_meta( $post_id, '_impact_report_pdf_revision', sanitize_text_field( $_POST['_impact_report_pdf_revision'] ) );
 			} else {
 				delete_post_meta( $post_id, '_impact_report_pdf_revision' );
 			}
 		}
 
-		// Generate PDF.
+		// Generate PDF. (Should this be editor only, too?)
 		$upload_directory = wp_upload_dir();
 		$upload_path = $upload_directory['basedir'] . '/temp_generated_pdfs';
 		$upload_url = get_site_url() . '/wp-content/uploads/temp_generated_pdfs';
@@ -648,9 +651,9 @@ class CAHNRSWP_Impact_Reports {
 			mkdir( $upload_path, 0777, true );
 		}
 		$file = array();
-		if ( isset( $_POST['_impact_report_pdf_revision'] ) && $_POST['_impact_report_pdf_revision'] != '' ) {
+		if ( isset( $_POST['_impact_report_pdf_revision'] ) && '' != $_POST['_impact_report_pdf_revision'] ) {
 			$year = $_POST['_impact_report_pdf_revision'];
-		} else if ( get_post_meta( $post->ID, '_impact_report_pdf_revision', true ) && $_POST['_impact_report_pdf_revision'] != '' ) {
+		} else if ( get_post_meta( $post->ID, '_impact_report_pdf_revision', true ) && '' != $_POST['_impact_report_pdf_revision'] ) {
 			$year = get_post_meta( $post->ID, '_impact_report_pdf_revision', true );
 		} else {
 			$year = date('Y');
@@ -763,6 +766,37 @@ class CAHNRSWP_Impact_Reports {
 
 		return $messages;
 
+	}
+
+	/**
+	 * Email Impact Report Editor when a post is submitted for review.
+	 *
+	 * @param string $new_status New post status after an update.
+	 * @param string $old_status Previous post status.
+	 * @param string $post       The post object.
+	 */
+	public function transition_post_status( $new_status, $old_status, $post ) {
+		
+		if ( $this->impact_report_content_type == $post->post_type && 'draft' == $old_status && 'pending' == $new_status ) {
+
+			$ir_title = get_the_title( $post->ID );
+			$ir_link  = get_edit_post_link( $post->ID, '&' );
+
+			$to = esc_html( $this->impact_report_editor );
+			$subject = 'Impact Report ready for review';
+			$message = 'Please review <a href="' . $ir_link . '">' . $ir_title . '</a> and take any necessary action. Thank you.';
+			add_filter( 'wp_mail_content_type', array( $this, 'set_html_content_type' ) );
+			wp_mail( $to, $subject, $message );
+			remove_filter( 'wp_mail_content_type', array( $this, 'set_html_content_type' ) );
+
+		}
+	}
+
+	/**
+	 * Filter for sending HTML emails.
+	 */
+	public function set_html_content_type() {
+		return 'text/html';
 	}
 
 	/**
