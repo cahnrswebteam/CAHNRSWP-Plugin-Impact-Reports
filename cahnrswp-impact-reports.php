@@ -136,6 +136,8 @@ class CAHNRSWP_Impact_Reports {
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ), 11 );
 		add_action( 'init', array( $this, 'add_taxonomies' ), 12 );
+		add_filter( 'map_meta_cap', array( $this, 'map_meta_cap' ), 10, 4 );
+		add_filter( 'user_has_cap', array( $this, 'user_has_cap' ) );
 		register_activation_hook( __FILE__, array( $this, 'rewrite_flush' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
@@ -172,6 +174,18 @@ class CAHNRSWP_Impact_Reports {
 			),
 			'description' => 'Reports on research, teaching and engagement from the CAHNRS and WSU Extension.',
 			'public' => true,
+			'capability_type' => 'impact_report',
+			'capabilities' => array(
+				'publish_posts'       => 'publish_impact_reports',
+				'edit_posts'          => 'edit_impact_reports',
+				'edit_others_posts'   => 'edit_others_impact_reports',
+				'delete_posts'        => 'delete_impact_reports',
+				'delete_others_posts' => 'delete_others_impact_reports',
+				'read_private_posts'  => 'read_private_impact_reports',
+				'edit_post'           => 'edit_impact_report',
+				'delete_post'         => 'delete_impact_report',
+				'read_post'           => 'read_impact_report',
+			),
 			'hierarchical' => false,
 			'menu_position' => 5,
 			'menu_icon' => 'dashicons-portfolio',
@@ -225,12 +239,97 @@ class CAHNRSWP_Impact_Reports {
 	}
 
 	/**
-	 * Flush rewrites on plugin activation.
+	 * Map custom meta capabilities.
+	 *
+	 * @param string $cap Capability name.
+	 * @param int $user_id User ID.
+	 *
+	 * @return array $caps Actual capabilities for meta capability.
+	 */
+	public function map_meta_cap( $caps, $cap, $user_id, $args ) {
+
+		// If publishing, editing, deleting, or reading an impact report, get the post and post type object.
+		if ( 'edit_impact_report' == $cap || 'delete_impact_report' == $cap || 'read_impact_report' == $cap ) {
+			$post = get_post( $args[0] );
+			$post_type = get_post_type_object( $post->post_type );
+
+			// Set an empty array for the capabilities.
+			$caps = array();
+		}
+
+		if ( 'edit_impact_report' == $cap ) {
+			if ( $user_id == $post->post_author ) {
+				$caps[] = $post_type->cap->edit_posts;
+			} else {
+				$caps[] = $post_type->cap->edit_others_posts;
+			}
+		} else if ( 'delete_impact_report' == $cap ) {
+			if ( $user_id == $post->post_author ) {
+				$caps[] = $post_type->cap->delete_posts;
+			} else {
+				$caps[] = $post_type->cap->delete_others_posts;
+			}
+		} else if ( 'read_impact_report' == $cap ) {
+			if ( 'private' != $post->post_status ) {
+				$caps[] = 'read';
+			} else if ( $user_id == $post->post_author ) {
+				$caps[] = 'read';
+			} else {
+				$caps[] = $post_type->cap->read_private_posts;
+			}
+		}
+
+		return $caps;
+
+	}
+
+	/**
+	 * "Assign" custom capabilities to default roles.
+	 *
+	 * @param array $caps Capabilities of the user.
+	 */
+	public function user_has_cap( $caps ) {
+		if ( ! empty( $caps['publish_posts'] ) ) {
+			$caps['publish_impact_reports'] = true;
+		}
+		if ( ! empty( $caps['edit_posts'] ) ) {
+			$caps['edit_impact_reports'] = true;
+		}
+		if ( ! empty( $caps['edit_others_posts'] ) ) {
+			$caps['edit_others_impact_reports'] = true;
+		}
+		if ( ! empty( $caps['delete_posts'] ) ) {
+			$caps['delete_impact_reports'] = true;
+		}
+		if ( ! empty( $caps['delete_others_posts'] ) ) {
+			$caps['delete_others_impact_reports'] = true;
+		}
+		if ( ! empty( $caps['read_private_posts'] ) ) {
+			$caps['read_private_impact_reports'] = true;
+		}
+    return $caps;
+	}
+
+	/**
+	 * Flush rewrites, add a custom role.
 	 */
 	public function rewrite_flush() {
 
+		// Flush rewrites on plugin activation.
 		$this->init();
 		flush_rewrite_rules();
+
+		// Add the Impact Report Contributor role.
+		add_role(
+			'impact_report_contributor',
+			'Impact Report Contributor',
+			array(
+				'read'                  => true,
+				'delete_impact_reports' => true,
+				'edit_impact_reports'   => true,
+				'upload_files'          => true,
+			)
+		);
 
 	}
 
