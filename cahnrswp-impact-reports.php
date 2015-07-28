@@ -9,17 +9,17 @@ Version: 0.1.1
 class CAHNRSWP_Impact_Reports {
 
 	/**
-	 * @var string: Content type slug.
+	 * @var string Content type slug.
 	 */
 	var $impact_report_content_type = 'impact';
 
 	/**
-	 * @var string: "Programs" taxonomy slug.
+	 * @var string "Programs" taxonomy slug.
 	 */
 	var $impact_report_programs = 'programs';
 
 	/**
-	 * @var array: Custom field details.
+	 * @var array Custom field details.
 	 */
 	var $impact_report_meta = array(
 		'ir_image_1' => array(
@@ -75,7 +75,7 @@ class CAHNRSWP_Impact_Reports {
 	);
 
 	/**
-	 * @var array: wp_editor details.
+	 * @var array wp_editor details.
 	 */
 	var $impact_report_editors = array(
 		'ir_summary' => array(
@@ -126,7 +126,7 @@ class CAHNRSWP_Impact_Reports {
 	);
 
 	/**
-	 * @var string: Impact report editor email.
+	 * @var string Impact report editor email.
 	 */
 	public $impact_report_editor;
 
@@ -138,6 +138,7 @@ class CAHNRSWP_Impact_Reports {
 		add_action( 'init', array( $this, 'add_taxonomies' ), 12 );
 		add_filter( 'map_meta_cap', array( $this, 'map_meta_cap' ), 10, 4 );
 		add_filter( 'user_has_cap', array( $this, 'user_has_cap' ) );
+		add_filter( 'registered_taxonomy', array( $this, 'registered_taxonomy' ), 10, 3 );
 		register_activation_hook( __FILE__, array( $this, 'rewrite_flush' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
@@ -184,7 +185,6 @@ class CAHNRSWP_Impact_Reports {
 				'delete_posts'        => 'delete_impact_reports',
 				'delete_others_posts' => 'delete_others_impact_reports',
 				'read_private_posts'  => 'read_private_impact_reports',
-				//'publish_post'        => 'publish_impact_report',
 				'edit_post'           => 'edit_impact_report',
 				'delete_post'         => 'delete_impact_report',
 				'read_post'           => 'read_impact_report',
@@ -244,8 +244,10 @@ class CAHNRSWP_Impact_Reports {
 	/**
 	 * Map custom meta capabilities.
 	 *
-	 * @param string $cap Capability name.
-	 * @param int $user_id User ID.
+	 * @param array $caps A list of required capabilities for this action.
+	 * @param string $cap The capability being checked.
+	 * @param int $user_id The current user ID.
+	 * @param array $args A numerically indexed array of additional arguments dependent on the meta cap being used.
 	 *
 	 * @return array $caps Actual capabilities for meta capability.
 	 */
@@ -258,6 +260,11 @@ class CAHNRSWP_Impact_Reports {
 
 			// Set an empty array for the capabilities.
 			$caps = array();
+		}
+
+		// Don't allow Impact Report Contributors to edit 'featured' reports.
+		if ( ( 'edit_impact_report' == $cap || 'delete_impact_report' == $cap ) && ! user_can( $user_id, 'edit_posts' ) && 'display' === get_post_meta( $args[0], '_impact_report_visibility', true ) ) {
+			$caps[] = 'do_not_allow';
 		}
 
 		if ( 'edit_impact_report' == $cap ) {
@@ -311,6 +318,23 @@ class CAHNRSWP_Impact_Reports {
 			$caps['read_private_impact_reports'] = true;
 		}
     return $caps;
+	}
+
+	/**
+	 * Allow Impact Report Contributors to assign taxonomy terms.
+	 *
+	 * @param string $taxonomy Taxonomy key.
+	 * @param array|string $object_type Name of the object type for the taxonomy object.
+	 * @param array|string $args Optional args used in taxonomy registration.
+	 */
+	public function registered_taxonomy( $taxonomy, $object_type, $args ) {
+
+		global $wp_taxonomies;
+
+    if ( ( $this->impact_report_programs == $taxonomy || 'topic' == $taxonomy || 'wsuwp_university_location' == $taxonomy ) && $this->impact_report_content_type == $object_type ) {
+        $wp_taxonomies[ $taxonomy ]->cap->assign_terms = 'edit_impact_report';
+    }
+
 	}
 
 	/**
@@ -602,14 +626,6 @@ class CAHNRSWP_Impact_Reports {
 			'after_title',
 			'high'
 		);
-		/*add_meta_box(
-			'impact_report_review',
-			'Ready For Edit',
-			array( $this, 'impact_report_review' ),
-			$this->impact_report_content_type,
-			'side',
-			'high'
-		);*/
 		if ( current_user_can( 'manage_options' ) ) {
 			add_meta_box(
 				'impact_report_review',
@@ -647,15 +663,6 @@ class CAHNRSWP_Impact_Reports {
 				echo '<input type="text" id="' . $i_k . '" name="' . $i_k . '" value="'. esc_attr( $value ) .'" class="widefat" /></p>';
 			}
 		}
-	}
-
-	/**
-	 * "Submit for Review" button.
-	 */
-	public function impact_report_review( $post ) {
-		echo '<p>Click the "Submit for Review" button below <em>after</em> a draft of the report has been saved and it is ready for an editorial review.</p>';
-		echo '<input class="button button-primary button-large impact-report-submit-for-review" name="send-to-edit" type="submit" value="Submit for Review" />';
-		echo '<div class="clear"></div>';
 	}
 
 	/**
@@ -908,7 +915,7 @@ class CAHNRSWP_Impact_Reports {
 	 *
 	 * @param string $new_status New post status after an update.
 	 * @param string $old_status Previous post status.
-	 * @param string $post       The post object.
+	 * @param object $post The post object.
 	 */
 	public function transition_post_status( $new_status, $old_status, $post ) {
 		
@@ -952,7 +959,7 @@ class CAHNRSWP_Impact_Reports {
 	 *
 	 * @param string $template
 	 *
-	 * @return string
+	 * @return string template path
 	 */
 	public function template_include( $template ) {
 		if ( $this->impact_report_content_type == get_post_type() ) {
@@ -970,9 +977,9 @@ class CAHNRSWP_Impact_Reports {
 	/**
 	 * Apply 'dogeared' class to the Impact Report menu item when viewing an impact report.
 	 *
-	 * @param array    $classes Current list of nav menu classes.
-	 * @param WP_Post  $item    Post object representing the menu item.
-	 * @param stdClass $args    Arguments used to create the menu.
+	 * @param array $classes Current list of nav menu classes.
+	 * @param WP_Post $item Post object representing the menu item.
+	 * @param stdClass $args Arguments used to create the menu.
 	 *
 	 * @return array Modified list of nav menu classes.
 	 */
