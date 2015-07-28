@@ -53,6 +53,7 @@ label[for="ir_impacts_position"] {
 	max-width: 100%;
 	width: 100%;
 }
+#postimagediv .hide-if-no-js,
 .upload-set-wrapper .hide-if-no-js {
 	margin-bottom: 0;
 }

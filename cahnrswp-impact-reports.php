@@ -144,6 +144,7 @@ class CAHNRSWP_Impact_Reports {
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'admin_head', array( $this, 'admin_head' ) );
 		add_action( 'edit_form_after_title', array( $this, 'edit_form_after_title' ) );
+		add_filter( 'admin_post_thumbnail_html', array( $this, 'admin_post_thumbnail_html' ), 10, 1 );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 10, 2 );
 		add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
 		add_filter( 'post_updated_messages', array( $this, 'post_updated_messages' ) );
@@ -549,6 +550,39 @@ class CAHNRSWP_Impact_Reports {
 
 		}
 
+	}
+
+	/**
+	 * Get the post type.
+	 *
+	 * @return string The post type
+	 */
+	public function get_featured_image_metabox_post_type() {
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			parse_str( parse_url( wp_get_referer(), PHP_URL_QUERY ), $query_array );
+			if ( array_key_exists( 'post_type', $query_array ) ) {
+				return $query_array['post_type'];
+			} else if ( array_key_exists( 'post', $query_array ) ) {
+				return get_post_type( $query_array['post'] );
+			}
+		} else {
+			$screen = get_current_screen();
+			return $screen->post_type;
+		}
+	}
+
+	/**
+	 * Add dimension requirements note to the featured image block.
+	 *
+	 * @param string $content Admin post thumbnail HTML markup.
+	 *
+	 * @return string
+	 */
+	public function admin_post_thumbnail_html( $content ) {
+		if ( $this->get_featured_image_metabox_post_type() === $this->impact_report_content_type ) {
+			$content = $content . '<p class="impact-report-image-size">(<span class="description">at least <strong>1370 × 450</strong> pixels [wide × tall]</span>)</p>';
+		}
+		return $content;
 	}
 
 	/**
