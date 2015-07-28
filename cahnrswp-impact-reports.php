@@ -150,6 +150,7 @@ class CAHNRSWP_Impact_Reports {
 		add_filter( 'transition_post_status', array( $this, 'transition_post_status' ), 10, 3 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
+		add_filter( 'nav_menu_css_class', array( $this, 'nav_menu_css_class'), 100, 3 );
 		$this->impact_report_editor = get_option( 'impact_report_editor_email' );
 	}
 
@@ -182,6 +183,7 @@ class CAHNRSWP_Impact_Reports {
 				'delete_posts'        => 'delete_impact_reports',
 				'delete_others_posts' => 'delete_others_impact_reports',
 				'read_private_posts'  => 'read_private_impact_reports',
+				//'publish_post'        => 'publish_impact_report',
 				'edit_post'           => 'edit_impact_report',
 				'delete_post'         => 'delete_impact_report',
 				'read_post'           => 'read_impact_report',
@@ -201,7 +203,7 @@ class CAHNRSWP_Impact_Reports {
 			),
 			'has_archive' => true,
 			'rewrite' => array(
-				'slug' => 'impact',
+				'slug' => $this->impact_report_content_type,
 				'with_front' => false
 			),
 		);
@@ -929,6 +931,23 @@ class CAHNRSWP_Impact_Reports {
 			$template = plugin_dir_path( __FILE__ ) . 'templates/image-resized.php';
 		}
 		return $template;
+	}
+
+	/**
+	 * Apply 'dogeared' class to the Impact Report menu item when viewing an impact report.
+	 *
+	 * @param array    $classes Current list of nav menu classes.
+	 * @param WP_Post  $item    Post object representing the menu item.
+	 * @param stdClass $args    Arguments used to create the menu.
+	 *
+	 * @return array Modified list of nav menu classes.
+	 */
+	public function nav_menu_css_class( $classes, $item, $args ) {
+		$url = site_url() . '/' . $this->impact_report_content_type . '/';
+		if ( 'site' === $args->theme_location && $this->impact_report_content_type == get_post_type() && $item->url == $url ) {
+			$classes[] = 'dogeared';
+		}
+    return $classes;
 	}
 
 	/**
