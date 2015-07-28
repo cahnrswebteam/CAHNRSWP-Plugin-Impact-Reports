@@ -52,38 +52,30 @@
 
       <?php
 				$programs = get_terms( 'programs' );
-				$program_count = count( $programs );
-
-				echo '<ul>';
-				foreach ( $programs as $program ) {
-
-					$program = sanitize_term( $program, 'programs' );
-    			$program_link = get_term_link( $program, 'programs' );
-
-					//echo '<li><a href="' . esc_url( $program_link ) . '">' . $program->name . '</a> (' . $program->count . ')</li>';
-					echo '<li><a href="' . esc_url( $program_link ) . '">' . $program->name . '</a></li>';
-
+				if ( ! is_wp_error( $programs ) ) {
+					echo '<ul>';
+					foreach ( $programs as $program ) {
+						$program = sanitize_term( $program, 'programs' );
+    				$program_link = get_term_link( $program, 'programs' );
+						echo '<li><a href="' . esc_url( $program_link ) . '">' . $program->name . '</a></li>';
+					}
+					echo '</ul>';
 				}
-				echo '</ul>';
 			?>
 	
 			<h4>Browse by Location</h4>
 
       <?php
 				$locations = get_terms( 'wsuwp_university_location' );
-				//$location_count = count( $locations );
-
-				echo '<ul>';
-				foreach ( $locations as $location ) {
-
-					$location = sanitize_term( $location, 'wsuwp_university_location' );
-    			$location_link = get_term_link( $location, 'wsuwp_university_location' );
-
-					//echo '<li><a href="' . esc_url( $location_link ) . '">' . $location->name . '</a> (' . $location->count . ')</li>';
-					echo '<li><a href="' . esc_url( $location_link ) . '">' . $location->name . '</a></li>';
-
+				if ( ! is_wp_error( $locations ) ) {
+					echo '<ul>';
+					foreach ( $locations as $location ) {
+						$location = sanitize_term( $location, 'wsuwp_university_location' );
+    				$location_link = get_term_link( $location, 'wsuwp_university_location' );
+						echo '<li><a href="' . esc_url( $location_link ) . '">' . $location->name . '</a></li>';
+					}
+					echo '</ul>';
 				}
-				echo '</ul>';
 			?>
 
 		</div><!--/column two-->
