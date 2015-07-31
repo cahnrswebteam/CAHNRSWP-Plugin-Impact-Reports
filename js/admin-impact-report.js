@@ -18,6 +18,21 @@ jQuery(document).ready(function($){
 		ir_label.addClass('screen-reader-text')
 	});
 
+	// Force the user to input a title before saving
+	$('#post').submit(function() {
+		if ( $('input[name="post_title"]').val() == '' ) {
+			$('#title').css('border','1px solid #c60c30');
+			alert( 'Please enter a title.' ); 
+			$('#title').focus();
+			$('#ajax-loading').hide();
+			$('#publish').removeClass('button-primary-disabled');
+			return false;  
+		}
+	}); 
+	$( "#title" ).focus(function() {
+		$( '#title' ).removeAttr('style');
+	});
+
 });
 
 function impact_reports(){
@@ -64,17 +79,5 @@ function impact_reports(){
 			jQuery(this).parent('.hide-if-no-js').remove();
 		});
 	}
-
-	// Make sure at least one Program is selected (http://wordpress.stackexchange.com/questions/128294/prevent-post-from-being-published-if-no-category-selected)
-	// Needs a bit of work
-	/*jQuery('#submitdiv').on('click', '#publish', function(e) {
-		var $checked = jQuery('#programs-all li input:checked');
-		if ( $checked.length <= 0 ) {
-			alert('Please select a Program');
-			return false;
-		} else {
-			return true;
-		}
-	});*/
 
 }
