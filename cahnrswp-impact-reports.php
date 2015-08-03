@@ -22,47 +22,47 @@ class CAHNRSWP_Impact_Reports {
 	 * @var array Custom field details.
 	 */
 	var $impact_report_meta = array(
-		'ir_image_1' => array(
+		'impact_report_image_1' => array(
 			'title' => 'front page bottom left image',
 			'desc' => 'optional; at least <strong>550</strong> pixels wide',
 			'type' => 'img',
 		),
-		'ir_image_2' => array(
+		'impact_report_image_2' => array(
 			'title' => 'back page top left image',
 			'desc'  => 'at least <strong>550 × 450</strong> pixels [wide × tall]',
 			'type'  => 'img',
 		),
-		'ir_image_3' => array(
+		'impact_report_image_3' => array(
 			'title' => 'back page top center image',
 			'desc' => 'at least <strong>677 × 450</strong> pixels [wide × tall]',
 			'type' => 'img',
 		),
-		'ir_image_4' => array(
+		'impact_report_image_4' => array(
 			'title' => 'back page top right image',
 			'desc' => 'at least <strong>677 × 450</strong> pixels [wide × tall]',
 			'type' => 'img',
 		),
-		'ir_image_5' => array(
+		'impact_report_image_5' => array(
 			'title' => 'back page bottom left image',
 			'desc' => 'optional; at least <strong>550</strong> pixels wide',
 			'type' => 'img',
 		),
-		'ir_subtitle' => array(
+		'impact_report_subtitle' => array(
 			'title' => 'Subtitle',
 			'desc' => 'optional',
 			'type' => 'text',
 		),
-		'ir_headline' => array(
+		'impact_report_headline' => array(
 			'title' => 'Headline',
 			'desc' => 'optional',
 			'type' => 'text',
 		),
-		'ir_impacts_position' => array(
+		'impact_report_impacts_position' => array(
 			'title' => 'Start "Impacts" section on front page',
 			'desc' => '',
 			'type' => 'checkbox',
 		),
-		'ir_additional_title' => array(
+		'impact_report_additional_title' => array(
 			'title' => 'Enter title for additional area here',
 			'desc' => '',
 			'type' => '',
@@ -78,47 +78,47 @@ class CAHNRSWP_Impact_Reports {
 	 * @var array wp_editor details.
 	 */
 	var $impact_report_editors = array(
-		'ir_summary' => array(
+		'impact_report_summary' => array(
 			'title' => 'Summary',
 			'desc' => 'Summarize the project in 60 words or less',
 			'type' => '',
 		),
-		'ir_issue' => array(
+		'impact_report_issue' => array(
 			'title' => 'Issue',
 			'desc' => 'Why the project was initiated',
 			'type' => 'main',
 		),
-		'ir_response' => array(
+		'impact_report_response' => array(
 			'title' => 'Response',
 			'desc' => 'The work that transpired in response to the issue',
 			'type' => 'main',
 		),
-		'ir_impacts' => array(
+		'impact_report_impacts' => array(
 			'title' => 'Impacts',
 			'desc' => 'The actual or likely result of the project',
 			'type' => 'main',
 		),
-		'ir_numbers' => array(
+		'impact_report_numbers' => array(
 			'title' => 'By the Numbers',
 			'desc' => 'Quantitative results of the project',
 			'type' => 'front-sidebar',
 		),
-		'ir_quotes' => array(
+		'impact_report_quotes' => array(
 			'title' => 'Quotes',
 			'desc' => 'Supporting testimony of the project',
 			'type' => 'back-sidebar',
 		),
-		'ir_additional' => array(
+		'impact_report_additional' => array(
 			'title' => 'Additional',
 			'desc' => 'Optional area for any further information (e.g. Partners, Grants & Donors, etc.)',
 			'type' => 'back-sidebar',
 		),
-		'ir_footer_front' => array(
+		'impact_report_footer_front' => array(
 			'title' => 'Front page footer',
 			'desc' => 'Contact information for the project lead',
 			'type' => '',
 		),
-		'ir_footer_back' => array(
+		'impact_report_footer_back' => array(
 			'title' => 'Back page footer',
 			'desc' => 'For more information about the project',
 			'type' => '',
@@ -332,7 +332,7 @@ class CAHNRSWP_Impact_Reports {
 		global $wp_taxonomies;
 
     if ( ( $this->impact_report_programs == $taxonomy || 'topic' == $taxonomy || 'wsuwp_university_location' == $taxonomy ) && $this->impact_report_content_type == $object_type ) {
-        $wp_taxonomies[ $taxonomy ]->cap->assign_terms = 'edit_impact_report';
+			$wp_taxonomies[ $taxonomy ]->cap->assign_terms = 'edit_impact_report';
     }
 
 	}
@@ -510,24 +510,24 @@ class CAHNRSWP_Impact_Reports {
 		
 		do_meta_boxes( get_current_screen(), 'after_title', $post );
 
-		$issue_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_ir_issue', true ) ) );
-		$response_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_ir_response', true ) ) );
-		$impact_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_ir_impacts', true ) ) );
+		$issue_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_impact_report_issue', true ) ) );
+		$response_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_impact_report_response', true ) ) );
+		$impact_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_impact_report_impacts', true ) ) );
 		$main_total = $issue_count + $response_count + $impact_count;
 		$main_remaining = ( $main_total ) ? 4500 - $main_total : '4500';
-		$numbers_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_ir_numbers', true ) ) );
+		$numbers_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_impact_report_numbers', true ) ) );
 		$front_sidebar_remaining = ( $numbers_count ) ? 900 - $numbers_count : '900';
-		$quotes_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_ir_quotes', true ) ) );
-		$additional_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_ir_additional', true ) ) );
+		$quotes_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_impact_report_quotes', true ) ) );
+		$additional_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_impact_report_additional', true ) ) );
 		$back_sidebar_total = $quotes_count + $additional_count;
 		$back_sidebar_remaining = ( $back_sidebar_total ) ? 900 - $back_sidebar_total : '900';
 
 		foreach ( $this->impact_report_editors as $i_k => $i_d ) {
 
 			// Checkbox for Impacts Position.
-			if ( $i_k == 'ir_impacts' ) {
-				$value = get_post_meta( $post->ID, '_ir_impacts_position', true );
-				echo '<label for="ir_impacts_position"><input type="checkbox" name="ir_impacts_position" id="ir_impacts_position" value="front"';
+			if ( $i_k == 'impact_report_impacts' ) {
+				$value = get_post_meta( $post->ID, '_impact_report_impacts_position', true );
+				echo '<label for="impact_report_impacts_position"><input type="checkbox" name="impact_report_impacts_position" id="impact_report_impacts_position" value="front"';
 				checked( $value, 'front' );
 				echo '/> Start on front page of PDF</label>';
 			}
@@ -536,21 +536,21 @@ class CAHNRSWP_Impact_Reports {
 			echo '<p class="description impact-report-description">' . $i_d['desc'] . '</p>';
 
 			// Title field for Additional area.
-			if ( $i_k == 'ir_additional' ) {
-				$value = get_post_meta( $post->ID, '_ir_additional_title', true );
+			if ( $i_k == 'impact_report_additional' ) {
+				$value = get_post_meta( $post->ID, '_impact_report_additional_title', true );
 				echo '<div id="impact-report-additional-title-wrap">';
 				echo '<label';
 				if ( $value ) {
 					echo ' class="screen-reader-text"';
 				}
-				echo ' id="impact-report-additional-title-prompt-text" for="ir_additional_title">Enter title for additional area here</label>';
-				echo '<input type="text" id="ir_additional_title" name="ir_additional_title" value="' . esc_attr( $value ) . '" class="widefat" />';
+				echo ' id="impact-report-additional-title-prompt-text" for="impact_report_additional_title">Enter title for additional area here</label>';
+				echo '<input type="text" id="impact_report_additional_title" name="impact_report_additional_title" value="' . esc_attr( $value ) . '" class="widefat" />';
 				echo '</div>';
 			}
 
 			$value = get_post_meta( $post->ID, '_' . $i_k, true );
 			
-			$editor_columns = ( 'ir_summary' === $i_k || 'ir_footer_front' === $i_k || 'ir_footer_back' === $i_k ) ? 2 : 10;
+			$editor_columns = ( 'impact_report_summary' === $i_k || 'impact_report_footer_front' === $i_k || 'impact_report_footer_back' === $i_k ) ? 2 : 10;
 
 			$editor_settings = array (
 				'textarea_rows' => $editor_columns,

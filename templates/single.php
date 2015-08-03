@@ -21,7 +21,7 @@
     		<header class="article-header">
 					<hgroup>
 						<?php
-							$subtitle = get_post_meta( get_the_ID(), '_ir_subtitle', true );
+							$subtitle = get_post_meta( get_the_ID(), '_impact_report_subtitle', true );
       				if ( $subtitle ) {
        					echo '<h2 class="article-subtitle">' . esc_html( $subtitle ) . '</h2>';
 							}
@@ -70,20 +70,20 @@
 
 				<?php 
 					// Headline.
-					$headline = get_post_meta( get_the_ID(), '_ir_headline', true );
+					$headline = get_post_meta( get_the_ID(), '_impact_report_headline', true );
 					if ( $headline ) {
 						echo '<h2>' . esc_html( $headline ) . '</h2>';
 					}
 
 					// Issue.
-					$issue = get_post_meta( get_the_ID(), '_ir_issue', true );
+					$issue = get_post_meta( get_the_ID(), '_impact_report_issue', true );
 					if ( $issue ) {
 						echo '<h4 id="issue">Issue</h4>';
 						echo wpautop( wp_kses_post( $issue ) );
 					}
 
 					// Response.
-					$response = get_post_meta( get_the_ID(), '_ir_response', true );
+					$response = get_post_meta( get_the_ID(), '_impact_report_response', true );
 					if ( $response ) {
 						echo '<h4 id="response">Response</h4>';
 						echo wpautop( wp_kses_post( str_replace( '<!--more-->', '', $response ) ) );
@@ -96,14 +96,14 @@
 
     	  <?php
 					// By the Numbers.
-        	$numbers = get_post_meta( get_the_ID(), '_ir_numbers', true );
+        	$numbers = get_post_meta( get_the_ID(), '_impact_report_numbers', true );
 					echo '<h4 id="numbers">By the numbers</h4>';
       	  if ( $numbers ) {
         	  echo wpautop( wp_kses_post( $numbers ) );
 					}
 
 					// Front bottom left image.
-					$front_bottom_left = get_post_meta( $post->ID, '_ir_image_1', true );
+					$front_bottom_left = get_post_meta( $post->ID, '_impact_report_image_1', true );
 					if ( $front_bottom_left ) {
 						$img_array = explode( '$S$', $front_bottom_left );
 						$image = wp_get_attachment_image_src( $img_array[0], 'medium' );
@@ -119,7 +119,7 @@
 
 			<?php
 				// Back page top left image.
-				$back_top_left = get_post_meta( $post->ID, '_ir_image_2', true );
+				$back_top_left = get_post_meta( $post->ID, '_impact_report_image_2', true );
 				if ( $back_top_left ) {
 					$img_array = explode( '$S$', $back_top_left );
 					$image = wp_get_attachment_image_src( $img_array[0], 'thumbnail' );
@@ -127,7 +127,7 @@
 				}
 
 				// Back page top center image.		
-				$back_top_center = get_post_meta( $post->ID, '_ir_image_3', true );
+				$back_top_center = get_post_meta( $post->ID, '_impact_report_image_3', true );
 				if ( $back_top_center ) {
 					$img_array = explode( '$S$', $back_top_center );
 					$image = wp_get_attachment_image_src( $img_array[0], 'thumbnail' );
@@ -135,7 +135,7 @@
 				}
 
 				// Back page top right image.
-				$back_top_right = get_post_meta( $post->ID, '_ir_image_4', true );
+				$back_top_right = get_post_meta( $post->ID, '_impact_report_image_4', true );
 				if ( $back_top_right ) {
 					$img_array = explode( '$S$', $back_top_right );
 					$image = wp_get_attachment_image_src( $img_array[0], 'thumbnail' );
@@ -151,7 +151,7 @@
 
 				<?php
 					// Impacts.
-					$impacts = get_post_meta( get_the_ID(), '_ir_impacts', true );
+					$impacts = get_post_meta( get_the_ID(), '_impact_report_impacts', true );
 					if ( $impacts ) {
 						echo '<h4 id="impacts">Impacts</h4>';
 						echo wpautop( wp_kses_post( str_replace( '<!--more-->', '', $impacts ) ) );
@@ -164,22 +164,22 @@
 
       	<?php
 					// Quotes.
-					$quotes = get_post_meta( get_the_ID(), '_ir_quotes', true );
+					$quotes = get_post_meta( get_the_ID(), '_impact_report_quotes', true );
 					if ( $quotes ) {
 						echo '<h4 id="quotes">Quotes</h4>';
 						echo wpautop( wp_kses_post( $quotes ) );
 					}
 
 					// Additional content.
-					$additional_title = get_post_meta( get_the_ID(), '_ir_additional_title', true );
-					$additional = get_post_meta( get_the_ID(), '_ir_additional', true );
+					$additional_title = get_post_meta( get_the_ID(), '_impact_report_additional_title', true );
+					$additional = get_post_meta( get_the_ID(), '_impact_report_additional', true );
 					if ( $additional_title && $additional ) {
 						echo '<h4>' . esc_html( $additional_title ) . '</h4>';
 						echo wpautop( wp_kses_post( $additional ) );
 					}
 
 					// Back page bottom left image.
-					$back_bottom_left = get_post_meta( $post->ID, '_ir_image_5', true );
+					$back_bottom_left = get_post_meta( $post->ID, '_impact_report_image_5', true );
 					if ( $back_bottom_left ) {
 						$img_array = explode( '$S$', $back_bottom_left );
 						$image = wp_get_attachment_image_src( $img_array[0], 'medium' );
@@ -197,13 +197,13 @@
 
 				<?php
 					// Front footer.
-					$footer_front = get_post_meta( get_the_ID(), '_ir_footer_front', true );
+					$footer_front = get_post_meta( get_the_ID(), '_impact_report_footer_front', true );
 					if ( $footer_front ) {
 						echo wpautop( wp_kses_post ( $footer_front ) );
 					}
 
 					// Back footer.
-					$footer_back = get_post_meta( get_the_ID(), '_ir_footer_back', true );
+					$footer_back = get_post_meta( get_the_ID(), '_impact_report_footer_back', true );
 					if ( $footer_back ) {
 						echo wpautop( wp_kses_post( $footer_back ) );
 					}
