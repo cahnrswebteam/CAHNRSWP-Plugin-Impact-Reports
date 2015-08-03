@@ -946,7 +946,7 @@ class CAHNRSWP_Impact_Reports {
 	 */
 	public function wp_enqueue_scripts() {
 		if ( $this->impact_report_content_type == get_post_type() ) {
-			wp_enqueue_style( 'impact-report-style',  plugins_url( 'css/impact-report.css', __FILE__ ) );
+			wp_enqueue_style( 'impact-report-style',  plugins_url( 'css/impact-report.css', __FILE__ ), array( 'wsu-spine' ) );
 			wp_enqueue_script( 'impact-report-script',  plugins_url( 'js/impact-report.js', __FILE__ ), array( 'jquery' ), '', true );
 		}
 		if ( is_post_type_archive( $this->impact_report_content_type ) || ( $this->impact_report_content_type === get_post_type() && is_archive() ) ) {

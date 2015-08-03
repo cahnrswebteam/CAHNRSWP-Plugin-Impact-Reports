@@ -1,3 +1,6 @@
+.main-header sub:not(.unset) {
+	display: none;
+}
 #impact-report-pdf {
 	background: #fff;
 	font-size: 0.9rem;

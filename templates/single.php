@@ -20,6 +20,7 @@
 			<div class="column one">
     		<header class="article-header">
 					<hgroup>
+						<h1 class="article-title"><?php the_title(); ?></h1>
 						<?php
 							$subtitle = get_post_meta( get_the_ID(), '_impact_report_subtitle', true );
       				if ( $subtitle ) {
