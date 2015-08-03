@@ -29,7 +29,7 @@
 						?>
 					</hgroup>
 					<hgroup class="source">
-						<time class="article-date" datetime="<?php echo get_the_date( 'c' ); ?>"><?php echo get_the_date(); ?></time>
+						<time class="article-date" datetime="<?php echo get_the_date( 'c' ); ?>"><?php echo get_the_date(); ?></time> | <time><?php the_modified_date(); ?></time>
 					</hgroup>
 				</header>
     	</div>

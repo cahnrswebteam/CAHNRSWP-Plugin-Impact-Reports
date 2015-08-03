@@ -1,6 +1,12 @@
 .main-header sub:not(.unset) {
 	display: none;
 }
+header time:before {
+	content: "Published ";
+}
+header time:last-of-type:before {
+	content: "Last Updated ";
+}
 #impact-report-pdf {
 	background: #fff;
 	font-size: 0.9rem;
