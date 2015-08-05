@@ -24,8 +24,8 @@ class CAHNRSWP_Impact_Reports {
 	var $impact_report_meta = array(
 		'impact_report_image_1' => array(
 			'title' => 'front page bottom left image',
-			'desc' => 'optional; at least <strong>550</strong> pixels wide',
-			'type' => 'img',
+			'desc'  => 'optional; at least <strong>550</strong> pixels wide',
+			'type'  => 'img',
 		),
 		'impact_report_image_2' => array(
 			'title' => 'back page top left image',
@@ -34,43 +34,43 @@ class CAHNRSWP_Impact_Reports {
 		),
 		'impact_report_image_3' => array(
 			'title' => 'back page top center image',
-			'desc' => 'at least <strong>677 × 450</strong> pixels [wide × tall]',
-			'type' => 'img',
+			'desc'  => 'at least <strong>677 × 450</strong> pixels [wide × tall]',
+			'type'  => 'img',
 		),
 		'impact_report_image_4' => array(
 			'title' => 'back page top right image',
-			'desc' => 'at least <strong>677 × 450</strong> pixels [wide × tall]',
-			'type' => 'img',
+			'desc'  => 'at least <strong>677 × 450</strong> pixels [wide × tall]',
+			'type'  => 'img',
 		),
 		'impact_report_image_5' => array(
 			'title' => 'back page bottom left image',
-			'desc' => 'optional; at least <strong>550</strong> pixels wide',
-			'type' => 'img',
+			'desc'  => 'optional; at least <strong>550</strong> pixels wide',
+			'type'  => 'img',
 		),
 		'impact_report_subtitle' => array(
 			'title' => 'Subtitle',
-			'desc' => 'optional',
-			'type' => 'text',
+			'desc'  => 'optional',
+			'type'  => 'text',
 		),
 		'impact_report_headline' => array(
 			'title' => 'Headline',
-			'desc' => 'optional',
-			'type' => 'text',
+			'desc'  => 'optional',
+			'type'  => 'text',
 		),
 		'impact_report_impacts_position' => array(
 			'title' => 'Start "Impacts" section on front page',
-			'desc' => '',
-			'type' => 'checkbox',
+			'desc'  => '',
+			'type'  => 'checkbox',
 		),
 		'impact_report_additional_title' => array(
 			'title' => 'Enter title for additional area here',
-			'desc' => '',
-			'type' => '',
+			'desc'  => '',
+			'type'  => '',
 		),
 		/*'ir_author' => array(
 			'title' => 'Report Author Email Address',
-			'desc' => '(not displayed)',
-			'type' => 'text',
+			'desc'  => '(not displayed)',
+			'type'  => 'text',
 		),*/
 	);
 
@@ -80,48 +80,48 @@ class CAHNRSWP_Impact_Reports {
 	var $impact_report_editors = array(
 		'impact_report_summary' => array(
 			'title' => 'Summary',
-			'desc' => 'Summarize the project in 60 words or less',
-			'type' => '',
+			'desc'  => 'Summarize the project in 60 words or less',
+			'type'  => '',
 		),
 		'impact_report_issue' => array(
 			'title' => 'Issue',
-			'desc' => 'Why the project was initiated',
-			'type' => 'main',
+			'desc'  => 'Why the project was initiated',
+			'type'  => 'main',
 		),
 		'impact_report_response' => array(
 			'title' => 'Response',
-			'desc' => 'The work that transpired in response to the issue',
-			'type' => 'main',
+			'desc'  => 'The work that transpired in response to the issue',
+			'type'  => 'main',
 		),
 		'impact_report_impacts' => array(
 			'title' => 'Impacts',
-			'desc' => 'The actual or likely result of the project',
-			'type' => 'main',
+			'desc'  => 'The actual or likely result of the project',
+			'type'  => 'main',
 		),
 		'impact_report_numbers' => array(
 			'title' => 'By the Numbers',
-			'desc' => 'Quantitative results of the project',
-			'type' => 'front-sidebar',
+			'desc'  => 'Quantitative results of the project',
+			'type'  => 'front-sidebar',
 		),
 		'impact_report_quotes' => array(
 			'title' => 'Quotes',
-			'desc' => 'Supporting testimony of the project',
-			'type' => 'back-sidebar',
+			'desc'  => 'Supporting testimony of the project',
+			'type'  => 'back-sidebar',
 		),
 		'impact_report_additional' => array(
 			'title' => 'Additional',
-			'desc' => 'Optional area for any further information (e.g. Partners, Grants & Donors, etc.)',
-			'type' => 'back-sidebar',
+			'desc'  => 'Optional area for any further information (e.g. Partners, Grants & Donors, etc.)',
+			'type'  => 'back-sidebar',
 		),
 		'impact_report_footer_front' => array(
 			'title' => 'Front page footer',
-			'desc' => 'Contact information for the project lead',
-			'type' => '',
+			'desc'  => 'Contact information for the project lead',
+			'type'  => '',
 		),
 		'impact_report_footer_back' => array(
 			'title' => 'Back page footer',
-			'desc' => 'For more information about the project',
-			'type' => '',
+			'desc'  => 'For more information about the project',
+			'type'  => '',
 		),
 	);
 
@@ -153,6 +153,8 @@ class CAHNRSWP_Impact_Reports {
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
 		add_filter( 'nav_menu_css_class', array( $this, 'nav_menu_css_class'), 100, 3 );
+		add_action( 'wp_ajax_nopriv_ajax_loading', array( $this, 'ajax_loading' ) );
+		add_action( 'wp_ajax_ajax_loading', array( $this, 'ajax_loading' ) );
 		$this->impact_report_editor = get_option( 'impact_report_editor_email' );
 	}
 
@@ -317,7 +319,7 @@ class CAHNRSWP_Impact_Reports {
 		if ( ! empty( $caps['read_private_posts'] ) ) {
 			$caps['read_private_impact_reports'] = true;
 		}
-    return $caps;
+		return $caps;
 	}
 
 	/**
@@ -331,9 +333,9 @@ class CAHNRSWP_Impact_Reports {
 
 		global $wp_taxonomies;
 
-    if ( ( $this->impact_report_programs == $taxonomy || 'topic' == $taxonomy || 'wsuwp_university_location' == $taxonomy ) && $this->impact_report_content_type == $object_type ) {
+		if ( ( $this->impact_report_programs == $taxonomy || 'topic' == $taxonomy || 'wsuwp_university_location' == $taxonomy ) && $this->impact_report_content_type == $object_type ) {
 			$wp_taxonomies[ $taxonomy ]->cap->assign_terms = 'edit_impact_report';
-    }
+		}
 
 	}
 
@@ -366,7 +368,7 @@ class CAHNRSWP_Impact_Reports {
 	public function admin_enqueue_scripts( $hook ) {
 		$screen = get_current_screen();
 		if ( ( 'post-new.php' === $hook || 'post.php' === $hook ) && $this->impact_report_content_type === $screen->post_type ) {
-			wp_enqueue_style(  'impact-report-admin-style', plugins_url( 'css/admin-impact-report.css', __FILE__ ), array() );
+			wp_enqueue_style( 'impact-report-admin-style', plugins_url( 'css/admin-impact-report.css', __FILE__ ), array() );
 			wp_enqueue_script( 'impact-report-admin-scripts', plugins_url( 'js/admin-impact-report.js', __FILE__ ), array() );
 			wp_enqueue_script( 'impact-report-taxonomy-scripts', plugins_url( 'js/admin-impact-report-taxonomy.js', __FILE__ ), array(), '', true );
 		}
@@ -676,7 +678,7 @@ class CAHNRSWP_Impact_Reports {
 
 		// PDF revision - display only if report has more than one PDF.
 		$pdf_meta = get_post_meta( $post->ID, '_impact_report_pdfs',true );
-		if ( $pdf_meta && ( count( $pdf_meta )  > 1 ) ) {
+		if ( $pdf_meta && ( count( $pdf_meta ) > 1 ) ) {
 			echo '<p><strong>Revision Access</strong><br /><span class="description">By default, changes published after December 31 will generate a new PDF. You can override this behavior and revise a previous year\'s PDF by selecting it below. Be sure to reset to "Current" when finished.</span></p>';
 			echo '<select name="_impact_report_pdf_revision" id="_impact_report_pdf_revision">';
 			echo '<option value="">Current</option>';
@@ -749,7 +751,7 @@ class CAHNRSWP_Impact_Reports {
 				if ( isset( $_POST[$i_k] ) ) {
 					update_post_meta( $post_id, '_' . $i_k, 'front' );
 				} else {
-    			delete_post_meta( $post_id, '_' . $i_k );
+					delete_post_meta( $post_id, '_' . $i_k );
 				}
 			} else {
 				if ( isset( $_POST[$i_k] ) && $_POST[$i_k] != '' ) {
@@ -837,14 +839,14 @@ class CAHNRSWP_Impact_Reports {
 		$args = array(
 			'post_per_page' => 1,
 			'post_type'     => 'attachment',
-			'name'          => trim ( $post_name ),
+			'name'          => trim( $post_name ),
 		);
 		$get_posts = new WP_Query( $args );
 		if ( $get_posts->posts[0] ) {
 			return $get_posts->posts[0];
 		} else {
 			return false;
-    }
+		}
 	}
 
 	/**
@@ -946,11 +948,14 @@ class CAHNRSWP_Impact_Reports {
 	 */
 	public function wp_enqueue_scripts() {
 		if ( is_single() && $this->impact_report_content_type == get_post_type() ) {
-			wp_enqueue_style( 'impact-report-style',  plugins_url( 'css/impact-report.css', __FILE__ ), array( 'wsu-spine' ) );
-			wp_enqueue_script( 'impact-report-script',  plugins_url( 'js/impact-report.js', __FILE__ ), array( 'jquery' ), '', true );
+			wp_enqueue_style( 'impact-report', plugins_url( 'css/impact-report.css', __FILE__ ), array( 'wsu-spine' ) );
+			wp_enqueue_script( 'impact-report', plugins_url( 'js/impact-report.js', __FILE__ ), array( 'jquery' ), '', true );
 		}
 		if ( is_post_type_archive( $this->impact_report_content_type ) || ( $this->impact_report_content_type === get_post_type() && is_archive() ) ) {
-			wp_enqueue_style( 'impact-report-archive-style',  plugins_url( 'css/impact-report-archive.css', __FILE__ ) );
+			global $wp_query;
+			wp_enqueue_style( 'impact-report-archive', plugins_url( 'css/impact-report-archive.css', __FILE__ ), array( 'spine-theme' ) );
+			wp_enqueue_script( 'impact-report-archive', plugins_url( 'js/impact-report-archive.js', __FILE__ ), array( 'jquery' ), '', true );
+			wp_localize_script( 'impact-report-archive', 'impacts', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 		}
 	}
 
@@ -988,7 +993,36 @@ class CAHNRSWP_Impact_Reports {
 		if ( 'site' === $args->theme_location && $this->impact_report_content_type == get_post_type() && $item->url == $url ) {
 			$classes[] = 'dogeared';
 		}
-    return $classes;
+		return $classes;
+	}
+
+	/**
+	 * Archive AJAX.
+	 */
+	public function ajax_loading() {
+
+		
+    $posts = new WP_Query( 'post_type=impact&posts_per_page=9&meta_key=_impact_report_visibility&meta_value=display&paged=' . $_POST['page']);
+
+    if ( $posts->have_posts() ) : 
+			$count = 0;
+			while ( $posts->have_posts() ) : $posts->the_post();
+				$count++;
+				if ( $count == 1 ) {
+					$column = 'one';
+				} else if ( $count == 2 ) {
+					$column = 'two';
+				} else if ( $count == 3 ) {
+					$column = 'three';
+					$count = 0;
+				}
+				//load_template( dirname( __FILE__ ) . '/templates/archive-single.php', false );
+				include( dirname( __FILE__ ) . '/templates/archive-single.php' );
+      endwhile;
+		endif;
+
+    //die();
+		exit;
 	}
 
 	/**
