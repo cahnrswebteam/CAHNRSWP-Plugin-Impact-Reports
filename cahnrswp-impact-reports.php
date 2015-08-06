@@ -153,8 +153,10 @@ class CAHNRSWP_Impact_Reports {
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
 		add_filter( 'nav_menu_css_class', array( $this, 'nav_menu_css_class'), 100, 3 );
-		add_action( 'wp_ajax_nopriv_ajax_loading', array( $this, 'ajax_loading' ) );
-		add_action( 'wp_ajax_ajax_loading', array( $this, 'ajax_loading' ) );
+		add_action( 'wp_ajax_nopriv_ajax_post_request', array( $this, 'ajax_post_request' ) );
+		add_action( 'wp_ajax_ajax_post_request', array( $this, 'ajax_post_request' ) );
+		add_action( 'wp_ajax_nopriv_ajax_taxonomy_request', array( $this, 'ajax_taxonomy_request' ) );
+		add_action( 'wp_ajax_ajax_taxonomy_request', array( $this, 'ajax_taxonomy_request' ) );
 		$this->impact_report_editor = get_option( 'impact_report_editor_email' );
 	}
 
@@ -997,32 +999,72 @@ class CAHNRSWP_Impact_Reports {
 	}
 
 	/**
-	 * Archive AJAX.
+	 * AJAX post requests.
 	 */
-	public function ajax_loading() {
+	public function ajax_post_request() {
 
-		
-    $posts = new WP_Query( 'post_type=impact&posts_per_page=9&meta_key=_impact_report_visibility&meta_value=display&paged=' . $_POST['page']);
+		$ajax_args = array(
+			'post_type' => $this->impact_report_content_type,
+			'meta_key'   => '_impact_report_visibility',
+			'meta_value' => 'display'
+		);
 
-    if ( $posts->have_posts() ) : 
-			$count = 0;
+		if ( $_POST['page'] ) {
+			$ajax_args['paged'] = $_POST['page'];
+			$ajax_args['posts_per_page'] = 12;
+		}
+
+		if ( $_POST['type'] ) {
+			$ajax_args['tax_query'] = array(
+				array(
+					'taxonomy' => $_POST['type'],
+					'field'    => 'slug',
+					'terms'    => $_POST['term'],
+				),
+			);
+			$ajax_args['posts_per_page'] = -1;
+		}
+
+		if ( $_POST['reset'] ) {
+			$posts = (int) $_POST['reset'] * 12;
+			$ajax_args['posts_per_page'] = $posts;
+		}
+
+		$posts = new WP_Query( $ajax_args );
+    if ( $posts->have_posts() ) {
 			while ( $posts->have_posts() ) : $posts->the_post();
-				$count++;
-				if ( $count == 1 ) {
-					$column = 'one';
-				} else if ( $count == 2 ) {
-					$column = 'two';
-				} else if ( $count == 3 ) {
-					$column = 'three';
-					$count = 0;
-				}
-				//load_template( dirname( __FILE__ ) . '/templates/archive-single.php', false );
-				include( dirname( __FILE__ ) . '/templates/archive-single.php' );
+				load_template( dirname( __FILE__ ) . '/templates/archive-single.php', false );
       endwhile;
-		endif;
+		} else {
+			echo 'Sorry, no Impact Reports match the criteria.';
+		}
 
     //die();
 		exit;
+	}
+
+	/**
+	 * AJAX taxonomy requests.
+	 */
+	public function ajax_taxonomy_request() {
+
+		if ( $_POST['type'] && $_POST['id']  ) {
+
+			$children = get_terms( $_POST['type'], array( 'parent' => (int) $_POST['id'], 'hide_empty' => 0 ) );
+
+			if ( ! empty( $children ) && ! is_wp_error( $children ) ) {
+				echo '<ul class="browse-terms">';
+				foreach ( $children as $term ) {
+					echo '<li class="topic-' . $term->slug . '">';
+					echo '<a href="' . get_term_link( $term ) . '" data-type="topic" data-slug="' . $term->slug . '" data-name="' . $term->name . '">' . $term->name . '</a>';
+					echo '</li>';
+				}
+				echo '</ul>';
+			}
+		}
+
+		exit;
+
 	}
 
 	/**

@@ -23,25 +23,14 @@
 			<?php
 				// Modify loop. Probably not the best way to do it... maybe a wp_query instead
 				global $query_string;
-				query_posts( $query_string . '&posts_per_page=9&meta_key=_impact_report_visibility&meta_value=display' );
-				
-				$count = 0;
-
+				query_posts( $query_string . '&posts_per_page=12&meta_key=_impact_report_visibility&meta_value=display' );
 				while ( have_posts() ) : the_post();
 				
-					$count++;
-					if ( $count == 1 ) {
-						$column = 'one';
-					} else if ( $count == 2 ) {
-						$column = 'two';
-					} else if ( $count == 3 ) {
-						$column = 'three';
-						$count = 0;
-					}
-
+				load_template( dirname( __FILE__ ) . '/archive-single.php', false );
+/*
 				?>
 
-				<article id="post-<?php the_ID(); ?>" <?php post_class( $column ); ?>>
+				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 					<figure class="article-thumbnail"><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail( 'thumbnail' ); ?></a></figure>
 
@@ -66,7 +55,7 @@
 
 				</article>
 
-			<?php endwhile; // end of the loop. ?>
+			<?php */endwhile; // end of the loop. ?>
 
 			</div>
 
@@ -75,7 +64,7 @@
  				$paged = ( get_query_var('paged') > 1 ) ? get_query_var('paged') : 1;
 			?>
 
-			<p class="more-button center" id="load-more-impact-reports"><a href="#" data-page="<?php echo $paged; ?>" data-max="<?php echo $max; ?>">More</a></p>
+			<p class="more-button center" id="load-more-impact-reports"><a href="#" data-page="<?php echo $paged; ?>" data-max="<?php echo $max; ?>" data-loaded="1">More</a></p>
 
 		</div><div class="column two">
 
@@ -90,20 +79,34 @@
 
 			<h2>Topics</h2>
 			<?php
-				$terms = get_terms( 'topic', array( 'parent' => 0 ) );
-				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
-					echo '<ul class="browse-topics">';
-					foreach ( $terms as $term ) {
-						echo '<li class="topic-' . $term->slug . '"><a href="' . get_term_link( $term ) . '">' . $term->name . '</a></li>';
+				$topics = get_terms( 'topic', array( 'parent' => 0 ) );
+				if ( ! empty( $topics ) && ! is_wp_error( $topics ) ) {
+					echo '<ul class="browse-terms topics">';
+					foreach ( $topics as $topic ) {
+						echo '<li class="topic-' . $topic->slug . '">';
+						echo '<a href="' . get_term_link( $topic ) . '" data-type="topic" data-id="' . $topic->term_id . '" data-level="top" data-slug="' . $topic->slug . '" data-name="' . $topic->name . '">' . $topic->name . '</a>';
+						echo '</li>';
 					}
 					echo '</ul>';
  				}
 			?>
 
 			<h2>Locations</h2>
-			<?php
-			
-			?>
+			<div class="locations-container">
+				<?php
+					$extension = get_term_by( 'name', 'WSU Extension', 'wsuwp_university_location' );
+					$locations = get_terms( 'wsuwp_university_location', array( 'parent' => (int) $extension->term_id ) );
+					if ( ! empty( $locations ) && ! is_wp_error( $locations ) ) {
+						echo '<ul class="browse-terms locations">';
+						foreach ( $locations as $location ) {
+							echo '<li class="wsuwp_university_location-' . $location->slug . '">';
+							echo '<a href="' . get_term_link( $location ) . '" data-type="wsuwp_university_location" data-level="top" data-slug="' . $location->slug . '" data-name="' . $location->name . '">' . $location->name . '</a>';
+							echo '</li>';
+						}
+						echo '</ul>';
+					}
+				?>
+			</div>
 
 		</div>
 

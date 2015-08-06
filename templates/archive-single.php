@@ -1,4 +1,4 @@
-<article id="post-<?php the_ID(); ?>" <?php post_class( $column ); ?>>
+<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 	<figure class="article-thumbnail"><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail( 'thumbnail' ); ?></a></figure>
 

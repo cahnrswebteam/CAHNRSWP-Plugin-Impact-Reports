@@ -1,62 +1,7 @@
-/*
-#impact-reports-nav {
-	font-size: 0;
-}
-#impact-reports-nav button {
-	color: #fff;
-	background-clip: padding-box;
-	background-color: #8d959a;
-	border: none;
-	border-radius: 0;
-	box-sizing: border-box;
-	display: inline-block;
-	font-size: 0.9rem;
-	margin: 0;
-	outline: 0;
-	padding: 0.3rem 0;
-	text-align: center;
-	vertical-align: top;
-	width: 33%;
-}
-#impact-reports-nav button:first-of-type {
-	border-right: 1px solid transparent;
-}
-#impact-reports-nav button:last-of-type {
-	border-left: 1px solid transparent;
-}
-#impact-reports-nav button:hover {
-	background-color: #c60c30;
-}
-#impact-reports-nav button.active {
-	background-color: #981e32;
-	position: relative;
-}
-#impact-reports-nav button.active:after {
-	border-width: 10px 10px 0;
-	border-style: solid;
-	border-color: #981e32 transparent;
-	content: '';
-	display: block;
-	height: 0;
-	left: 0;
-	margin: 0 auto;
-	position: absolute;
-	right: 0;
-	text-align: center;
-	top: 100%;
-	width: 0;
-}
-*/
 h2 {
 	font-weight: normal;
 	text-transform: uppercase;
 }
-/*article.has-featured-image {
-	clear: both;
-	margin-bottom: 1rem;
-	min-height: 1rem;
-	position: relative;
-}*/
 article {
 	box-sizing: border-box;
 	float: left;
@@ -64,14 +9,14 @@ article {
 	position: relative;
 	width: 33.3%;
 }
-article.one {
+article:nth-child(3n+1) {
 	border-right: 0.5rem solid transparent;
 }
-article.two {
+article:nth-child(3n+2) {
 	border-left: 0.25rem solid transparent;
 	border-right: 0.25rem solid transparent;
 }
-article.three {
+article:nth-child(3n+3) {
 	border-left: 0.5rem solid transparent;
 }
 figure.article-thumbnail {
@@ -82,13 +27,20 @@ figure.article-thumbnail img {
 	display: block;
 	width: 100%;
 }
-article.has-featured-image > div {
+article > div {
 	bottom: 0;
+	overflow-y: hidden;
 	position: absolute;
 	width: 100%;
 	z-index: 0;
+	/*transition: max-height 0.5s ease-out;
+  max-height: auto;*/
 }
-article.has-featured-image > div:before {
+article:hover > div {
+	/*transition: max-height 0.5s ease-in;
+	max-height: 100%;*/
+}
+article > div:before {
 	content: '';
 	height: 100%;
 	left: 0;
@@ -103,49 +55,63 @@ article.has-featured-image > div:before {
 	z-index: -1;
 }
 
-.has-featured-image.topic-4-h > div:before,
-.topic-4-h a:hover {
+.topic-4-h > div:before,
+.topic-4-h a:hover,
+.topic-4-h .active {
 	background-color: #009849;
 }
-.has-featured-image.topic-agricultural-production > div:before,
-.topic-agricultural-production a:hover {
+.topic-agricultural-production > div:before,
+.topic-agricultural-production a:hover,
+.topic-agricultural-production .active {
 	background: #826229;
 }
-.has-featured-image.topic-communities-and-economic-development > div:before,
-.topic-communities-and-economic-development a:hover {
+.topic-communities-and-economic-development > div:before,
+.topic-communities-and-economic-development a:hover,
+.topic-communities-and-economic-development .active {
 	background: #b67233;
 }
-.has-featured-image.topic-family-and-home > div:before,
-.topic-family-and-home a:hover {
+.topic-family-and-home > div:before,
+.topic-family-and-home a:hover,
+.topic-family-and-home .active {
 	background: #4f868e;
 }
-.has-featured-image.topic-food-and-nutrition > div:before,
-.topic-food-and-nutrition a:hover {
+.topic-food-and-nutrition > div:before,
+.topic-food-and-nutrition a:hover,
+.topic-food-and-nutrition .active {
 	background: #c69214;
 }
-.has-featured-image.topic-gardening > div:before,
-.topic-gardening a:hover {
+.topic-gardening > div:before,
+.topic-gardening a:hover,
+.topic-gardening .active {
 	background: #7b451d;
 }
-.has-featured-image.topic-natural-resources > div:before,
-.topic-natural-resources a:hover {
+.topic-natural-resources > div:before,
+.topic-natural-resources a:hover,
+.topic-natural-resources .active {
 	background: #8f7e35;
 }
 
-article.has-featured-image:hover > div:before {
+article:hover > div:before {
 	opacity: 1;
 }
 article header h3 {
-	font-size: 0.9rem;
-	font-weight: normal;
+	font-size: 1em;
+	line-height: 1.5em;
 	padding: 0;
 }
 article header h3 a {
 	display: block;
 	padding: 0.5rem 1rem;
 }
-article.has-featured-image .article-summary {
-	/*display: none;*/
+
+article .article-summary {
+	display: none;
+	padding: 0 1rem;
+}
+article:hover .article-summary {
+	display: block;
+}
+/*article .article-summary {
 	max-height: 0;
 	overflow-y: hidden;
 	padding: 0 1rem;
@@ -155,9 +121,9 @@ article.has-featured-image .article-summary {
 	transition-timing-function: ease-in-out;
 	transition-timing-function: cubic-bezier(0, 0, 0.5, 0.5);
 }
-article.has-featured-image:hover .article-summary {
+article:hover .article-summary {
 	max-height: 244px;
-}
+}*/
 
 .more-button {
 	margin-top: 2rem;
@@ -245,16 +211,19 @@ article.has-featured-image:hover .article-summary {
 	border-width: 0;
 }
 
-.browse-topics {
+.browse-terms {
 	padding: 0;
 	list-style: none;
 }
-.browse-topics li {
-	padding: 0 0 7px 0;
-}
-.browse-topics li a {
+.browse-terms.topics > li {
 	border-style: solid;
 	border-width: 1px;
+	margin-bottom: 7px;
+	max-height: 150px;
+	overflow: scroll;
+	padding: 0;
+}
+.browse-terms.topics > li > a {
 	display: block;
 	padding: 0.3rem 0.5rem;
 	text-align: center;
@@ -263,27 +232,55 @@ article.has-featured-image:hover .article-summary {
 	-o-transition:      background-color .2s linear;
 	transition:         background-color .2s linear;
 }
-.topic-4-h a {
+.topic-4-h {
 	border-color: #009e60;
 	border-color: #009849;
 }
-.topic-agricultural-production a {
+.topic-agricultural-production {
 	border-color: #826229;
 }
-.topic-communities-and-economic-development a {
+.topic-communities-and-economic-development {
 	border-color: #b67233;
 }
-.topic-family-and-home a {
+.topic-family-and-home {
 	border-color: #4f868e;
 }
-.topic-food-and-nutrition a {
+.topic-food-and-nutrition {
 	border-color: #c69214;
 }
-.topic-gardening a {
+.topic-gardening {
 	border-color: #7b451d;
 }
-.topic-natural-resources a {
+.topic-natural-resources {
 	border-color: #8f7e35;
+}
+.browse-terms.topics li ul {
+	
+}
+
+.locations-container {
+	height: 150px;
+	overflow: scroll;
+	position: relative;
+}
+.browse-terms.topics li ul,
+.browse-terms.locations {
+	background: #5e6a71;
+}
+.browse-terms.topics li ul li,
+.browse-terms.locations li {
+	padding: 0;
+}
+.browse-terms.topics li ul li a,
+.browse-terms.locations li a {
+	display: block;
+	padding: 0.3rem 0.5rem;
+}
+.browse-terms.locations li a:hover {
+	background: #464e54;
+}
+.browse-terms.locations li a.active {
+	background: #981e32;
 }
 
 @media only screen and (max-width:480px) {
