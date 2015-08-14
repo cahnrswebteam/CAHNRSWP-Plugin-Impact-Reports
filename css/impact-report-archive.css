@@ -29,6 +29,7 @@ figure.article-thumbnail img {
 }
 article > div {
 	bottom: 0;
+	max-height: 100%;
 	overflow-y: hidden;
 	position: absolute;
 	width: 100%;
@@ -215,7 +216,7 @@ article:hover .article-summary {
 	padding: 0;
 	list-style: none;
 }
-.browse-terms.topics > li {
+.browse-terms.topics li {
 	border-style: solid;
 	border-width: 1px;
 	margin-bottom: 7px;
@@ -223,7 +224,7 @@ article:hover .article-summary {
 	overflow: scroll;
 	padding: 0;
 }
-.browse-terms.topics > li > a {
+.browse-terms.topics li a {
 	display: block;
 	padding: 0.3rem 0.5rem;
 	text-align: center;
@@ -254,24 +255,17 @@ article:hover .article-summary {
 .topic-natural-resources {
 	border-color: #8f7e35;
 }
-.browse-terms.topics li ul {
-	
-}
-
 .locations-container {
 	height: 150px;
 	overflow: scroll;
 	position: relative;
 }
-.browse-terms.topics li ul,
 .browse-terms.locations {
 	background: #5e6a71;
 }
-.browse-terms.topics li ul li,
 .browse-terms.locations li {
 	padding: 0;
 }
-.browse-terms.topics li ul li a,
 .browse-terms.locations li a {
 	display: block;
 	padding: 0.3rem 0.5rem;
@@ -284,9 +278,9 @@ article:hover .article-summary {
 }
 
 @media only screen and (max-width:480px) {
-	article.one,
-	article.two,
-	article.three {
+	article:nth-child(3n+1),
+	article:nth-child(3n+2),
+	article:nth-child(3n+3) {
 		border: none;
 		float: none;
 		position: relative;

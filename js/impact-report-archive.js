@@ -55,11 +55,7 @@
 
 		if ( ! term.hasClass( 'active' ) ) {
 
-			$( '.browse-terms > li > a' ).removeClass( 'active' );
-			
-			if ( 'top' == term.data( 'level' ) ) {
-				$( '.browse-terms.topics > li > ul' ).remove();
-			}
+			$( '.browse-terms li a' ).removeClass( 'active' );	
 
 			var slug = term.data( 'slug' );
 
@@ -77,20 +73,6 @@
 				},
 				beforeSend: function() {
 					term.text( 'Loading...' );
-					if ( typeof id !== 'undefined' ) {
-						$.ajax({
-							url: impacts.ajaxurl,
-							type: 'post',
-							data: {
-								action: 'ajax_taxonomy_request',
-								type: type,
-								id: id,
-							},
-							success: function( html ) {
-								term.parent( 'li' ).append( html );
-							}
-						})
-					}
 				},
 				success: function( html ) {
 					$( '#impact-reports' ).html( html );
@@ -103,10 +85,6 @@
 			var loaded = $( '#load-more-impact-reports a' ).data( 'loaded' );
 
 			term.removeClass( 'active' );
-
-			if ( 'top' == term.data( 'level' ) ) {
-				$( '.browse-terms.topics > li > ul' ).remove();
-			}
 
 			$.ajax({
 				url: impacts.ajaxurl,

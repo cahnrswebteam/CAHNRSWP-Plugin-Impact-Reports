@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: CAHNRSWP Impact Reports
-Description: Impact reports content type and PDF generation.
+Description: Impact Report content type and PDF generation.
 Author: CAHNRS, danialbleile, philcable
 Version: 0.1.1
 */
@@ -126,7 +126,7 @@ class CAHNRSWP_Impact_Reports {
 	);
 
 	/**
-	 * @var string Impact report editor email.
+	 * @var string Impact Report editor email.
 	 */
 	public $impact_report_editor;
 
@@ -155,8 +155,6 @@ class CAHNRSWP_Impact_Reports {
 		add_filter( 'nav_menu_css_class', array( $this, 'nav_menu_css_class'), 100, 3 );
 		add_action( 'wp_ajax_nopriv_ajax_post_request', array( $this, 'ajax_post_request' ) );
 		add_action( 'wp_ajax_ajax_post_request', array( $this, 'ajax_post_request' ) );
-		add_action( 'wp_ajax_nopriv_ajax_taxonomy_request', array( $this, 'ajax_taxonomy_request' ) );
-		add_action( 'wp_ajax_ajax_taxonomy_request', array( $this, 'ajax_taxonomy_request' ) );
 		$this->impact_report_editor = get_option( 'impact_report_editor_email' );
 	}
 
@@ -226,12 +224,13 @@ class CAHNRSWP_Impact_Reports {
 				'new_item_name' => 'New Program Name',
 				'menu_name'     => 'Programs',
 			),
-			'description'   => 'Impact Report Programs',
-			'public'        => true,
-			'hierarchical'  => true,
-			'show_ui'       => true,
-			'show_in_menu'  => true,
-			'query_var'     => $this->impact_report_programs,
+			'description'       => 'Impact Report Programs',
+			'public'            => true,
+			'hierarchical'      => true,
+			'show_ui'           => true,
+			'show_admin_column' => true,
+			'show_in_menu'      => true,
+			'query_var'         => $this->impact_report_programs,
 		);
 		register_taxonomy( $this->impact_report_programs, $this->impact_report_content_type, $programs );
 
@@ -257,7 +256,7 @@ class CAHNRSWP_Impact_Reports {
 	 */
 	public function map_meta_cap( $caps, $cap, $user_id, $args ) {
 
-		// If publishing, editing, deleting, or reading an impact report, get the post and post type object.
+		// If publishing, editing, deleting, or reading an Impact Report, get the post and post type object.
 		if ( 'edit_impact_report' == $cap || 'delete_impact_report' == $cap || 'read_impact_report' == $cap ) {
 			$post = get_post( $args[0] );
 			$post_type = get_post_type_object( $post->post_type );
@@ -446,13 +445,13 @@ class CAHNRSWP_Impact_Reports {
 			$screen->add_help_tab( array(
 				'id'			=> 'impact_report_overview',
 				'title'	  => 'About',
-				'content' => '<p>Impact reports are concise reports on research, teaching, and engagement from CAHNRS and WSU Extension programs. Each report has three main text sections:</p><ol><li><strong>Issue</strong> describes the problem and why the work was undertaken;</li><li><strong>Response</strong> describes what was done to address the issue (outputs); and</li><li><strong>Impacts</strong> documents the actual outcomes, such as changes in knowledge, or actions and condition of participants or a community.</li></ol><p>(See below for further descriptions of each section.)</p><p>The image below shows how your content will be organized on a finished report (<span style="color:#c7aa5b;">yellow</span> denotes optional components).</p><p style="text-align:center;"><img src ="' . plugins_url( 'images/layout.png', __FILE__ ) . '" height="345" width"525" /></p><p>(Approximate word counts: Issue + Response + Impacts = 600. Note, fewer words will fit if material is in bulleted lists.)</p><p>Please click the tabs to the left for descriptions and examples of each component of an impact report. For additional support, please contact the Impact Reports editor at <a href="mailto:' . esc_attr( $this->impact_report_editor ) . '">' . esc_html( $this->impact_report_editor ) . '</a>.</p>',
+				'content' => '<p>Impact Reports are concise reports on research, teaching, and engagement from CAHNRS and WSU Extension programs. Each report has three main text sections:</p><ol><li><strong>Issue</strong> describes the problem and why the work was undertaken;</li><li><strong>Response</strong> describes what was done to address the issue (outputs); and</li><li><strong>Impacts</strong> documents the actual outcomes, such as changes in knowledge, or actions and condition of participants or a community.</li></ol><p>(See below for further descriptions of each section.)</p><p>The image below shows how your content will be organized on a finished report (<span style="color:#c7aa5b;">yellow</span> denotes optional components).</p><p style="text-align:center;"><img src ="' . plugins_url( 'images/layout.png', __FILE__ ) . '" height="345" width"525" /></p><p>(Approximate word counts: Issue + Response + Impacts = 600. Note, fewer words will fit if material is in bulleted lists.)</p><p>Please click the tabs to the left for descriptions and examples of each component of an Impact Report. For additional support, please contact the Impact Reports editor at <a href="mailto:' . esc_attr( $this->impact_report_editor ) . '">' . esc_html( $this->impact_report_editor ) . '</a>.</p>',
 			) );
 
 			$screen->add_help_tab( array(
 				'id'			=> 'impact_report_images',
 				'title'	  => 'Images',
-				'content' => '<p>Each impact report can feature four images, with the option for one additional image. All images must meet minimum size requirements in order to produce high-quality print results. Images that are not proportional to the required dimensions may be used, but will be automatically cropped, which may yield undesirable results in some cases.</p><p>Front Page</p><p style="padding-left:30px;">The <em>Featured Image</em> is displayed next to the logo at the top of the front page, and should be at least 1370 × 450 pixels (wide × tall).</p><p style="padding-left:30px;">The bottom left image is optional. It should be at least 550 pixels wide. There is no height restriction, but note that using an image here will limit the amount of space that is available for “By the Numbers” text, above it.</p><p>Back Page</p><p style="padding-left:30px;">The top left image should be at least 550 × 450 pixels (wide × tall).</p><p style="padding-left:30px;">Both the top center and top right images should be at least 677 × 450 pixels (wide × tall).</p><p><strong>Images that do not meet the minimum size requirements will not display.</strong></p>',
+				'content' => '<p>Each Impact Report can feature four images, with the option for one additional image. All images must meet minimum size requirements in order to produce high-quality print results. Images that are not proportional to the required dimensions may be used, but will be automatically cropped, which may yield undesirable results in some cases.</p><p>Front Page</p><p style="padding-left:30px;">The <em>Featured Image</em> is displayed next to the logo at the top of the front page, and should be at least 1370 × 450 pixels (wide × tall).</p><p style="padding-left:30px;">The bottom left image is optional. It should be at least 550 pixels wide. There is no height restriction, but note that using an image here will limit the amount of space that is available for “By the Numbers” text, above it.</p><p>Back Page</p><p style="padding-left:30px;">The top left image should be at least 550 × 450 pixels (wide × tall).</p><p style="padding-left:30px;">Both the top center and top right images should be at least 677 × 450 pixels (wide × tall).</p><p><strong>Images that do not meet the minimum size requirements will not display.</strong></p>',
 			) );
 
 			$screen->add_help_tab( array(
@@ -898,16 +897,16 @@ class CAHNRSWP_Impact_Reports {
 
 		$messages[ $this->impact_report_content_type ] = array(
 			0  => '', // Unused. Messages start at index 1.
-			1  => sprintf( 'Impact report updated. <a href="%s">View impact report</a>', esc_url( get_permalink($post_ID) ) ),
+			1  => sprintf( 'Impact Report updated. <a href="%s">View impact report</a>', esc_url( get_permalink($post_ID) ) ),
 			2  => 'Custom field updated.',
 			3  => 'Custom field deleted.',
-			4  => 'Impact report updated.',
+			4  => 'Impact Report updated.',
 			5  => isset( $_GET['revision'] ) ? sprintf( 'Impact report restored to revision from %s', wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-			6  => 'Impact report published.',
-			7  => 'Impact report saved.',
-			8  => 'Your Impact report has been successfully sent to the impact reports editor. If you have any questions, please email the editor at: <a href="mailto:' . esc_attr( $this->impact_report_editor ) . '">' . esc_html( $this->impact_report_editor ) . '</a>.',
-			9  => sprintf( 'Impact report scheduled for: <strong>%1$s</strong>.', date_i18n( 'M j, Y @ G:i', strtotime( $post->post_date ) ) ),
-			10 => 'Impact report draft updated.'
+			6  => 'Impact Report published.',
+			7  => 'Impact Report saved.',
+			8  => 'Your Impact Report has been sent to the impact reports editor. If you have any questions, please email the editor at: <a href="mailto:' . esc_attr( $this->impact_report_editor ) . '">' . esc_html( $this->impact_report_editor ) . '</a>.',
+			9  => sprintf( 'Impact Report scheduled for: <strong>%1$s</strong>.', date_i18n( 'M j, Y @ G:i', strtotime( $post->post_date ) ) ),
+			10 => 'Impact Report draft updated.'
 		);
 
 		return $messages;
@@ -1041,30 +1040,6 @@ class CAHNRSWP_Impact_Reports {
 
     //die();
 		exit;
-	}
-
-	/**
-	 * AJAX taxonomy requests.
-	 */
-	public function ajax_taxonomy_request() {
-
-		if ( $_POST['type'] && $_POST['id']  ) {
-
-			$children = get_terms( $_POST['type'], array( 'parent' => (int) $_POST['id'], 'hide_empty' => 0 ) );
-
-			if ( ! empty( $children ) && ! is_wp_error( $children ) ) {
-				echo '<ul class="browse-terms">';
-				foreach ( $children as $term ) {
-					echo '<li class="topic-' . $term->slug . '">';
-					echo '<a href="' . get_term_link( $term ) . '" data-type="topic" data-slug="' . $term->slug . '" data-name="' . $term->name . '">' . $term->name . '</a>';
-					echo '</li>';
-				}
-				echo '</ul>';
-			}
-		}
-
-		exit;
-
 	}
 
 	/**
