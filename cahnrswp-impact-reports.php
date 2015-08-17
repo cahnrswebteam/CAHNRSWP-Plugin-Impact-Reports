@@ -972,7 +972,7 @@ class CAHNRSWP_Impact_Reports {
 			$template = plugin_dir_path( __FILE__ ) . 'templates/single.php';
 		}
 		if ( is_post_type_archive( $this->impact_report_content_type ) || ( $this->impact_report_content_type === get_post_type() && is_archive() ) ) {
-			$template = plugin_dir_path( __FILE__ ) . 'templates/archive.php';
+			$template = plugin_dir_path( __FILE__ ) . 'templates/index.php';
 		}
 		if ( is_front_page() && isset( $_GET['resized'] ) ) {
 			$template = plugin_dir_path( __FILE__ ) . 'templates/image-resized.php';

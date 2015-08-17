@@ -22,40 +22,13 @@
 
 			<?php
 				// Modify loop. Probably not the best way to do it... maybe a wp_query instead
+				// check https://codex.wordpress.org/Function_Reference/get_next_posts_link if doing so
 				global $query_string;
 				query_posts( $query_string . '&posts_per_page=12&meta_key=_impact_report_visibility&meta_value=display' );
 				while ( have_posts() ) : the_post();
-				
-				load_template( dirname( __FILE__ ) . '/archive-single.php', false );
-/*
-				?>
-
-				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-
-					<figure class="article-thumbnail"><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail( 'thumbnail' ); ?></a></figure>
-
-					<div>
-
-						<header class="article-header">
-							<hgroup>
-								<h3 class="article-title">
-									<a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a>
-								</h3>
-							</hgroup>
-						</header>
-
-						<?php
-							$summary = get_post_meta( get_the_ID(), '_impact_report_summary', true );
-							if ( $summary ) {
-								?><div class="article-summary"><?php echo wpautop( wp_kses_post( $summary ) ); ?></div><?php
-							}
-						?>
-
-					</div>
-
-				</article>
-
-			<?php */endwhile; // end of the loop. ?>
+					load_template( dirname( __FILE__ ) . '/post.php', false );
+				endwhile;
+			?>
 
 			</div>
 
@@ -64,7 +37,11 @@
  				$paged = ( get_query_var('paged') > 1 ) ? get_query_var('paged') : 1;
 			?>
 
-			<p class="more-button center" id="load-more-impact-reports"><a href="#" data-page="<?php echo $paged; ?>" data-max="<?php echo $max; ?>" data-loaded="1">More</a></p>
+			<?php if ( get_next_posts_link() ) : ?> 
+				<div class="more-button center" id="load-more-impact-reports">
+      		<a href="<?php next_posts(); ?>" data-page="<?php echo $paged; ?>" data-max="<?php echo $max; ?>" data-loaded="1">More</a>
+				</div>
+			<?php endif; ?>
 
 		</div><div class="column two">
 

@@ -15,7 +15,7 @@
 		<?php
 			$summary = get_post_meta( get_the_ID(), '_impact_report_summary', true );
 			if ( $summary ) {
-				?><div class="article-summary"><?php echo wpautop( wp_kses_post( $summary ) ); ?></div><?php
+				?><a href="<?php the_permalink(); ?>" class="article-summary"><?php echo wp_kses_post( $summary ); ?></a><?php
 			}
 		?>
 
