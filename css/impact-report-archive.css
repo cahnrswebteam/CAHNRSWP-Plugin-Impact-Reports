@@ -34,12 +34,8 @@ article > div {
 	position: absolute;
 	width: 100%;
 	z-index: 0;
-	/*transition: max-height 0.5s ease-out;
-  max-height: auto;*/
 }
 article:hover > div {
-	/*transition: max-height 0.5s ease-in;
-	max-height: 100%;*/
 }
 article > div:before {
 	content: '';
@@ -55,43 +51,41 @@ article > div:before {
 	transition:         opacity .2s linear;
 	z-index: -1;
 }
-
 .topic-4-h > div:before,
-.topic-4-h a:hover,
+.topic-4-h > a:hover,
 .topic-4-h .active {
 	background-color: #009849;
 }
 .topic-agricultural-production > div:before,
-.topic-agricultural-production a:hover,
+.topic-agricultural-production > a:hover,
 .topic-agricultural-production .active {
 	background: #826229;
 }
 .topic-communities-and-economic-development > div:before,
-.topic-communities-and-economic-development a:hover,
+.topic-communities-and-economic-development > a:hover,
 .topic-communities-and-economic-development .active {
 	background: #b67233;
 }
 .topic-family-and-home > div:before,
-.topic-family-and-home a:hover,
+.topic-family-and-home > a:hover,
 .topic-family-and-home .active {
 	background: #4f868e;
 }
 .topic-food-and-nutrition > div:before,
-.topic-food-and-nutrition a:hover,
+.topic-food-and-nutrition > a:hover,
 .topic-food-and-nutrition .active {
 	background: #c69214;
 }
 .topic-gardening > div:before,
-.topic-gardening a:hover,
+.topic-gardening > a:hover,
 .topic-gardening .active {
 	background: #7b451d;
 }
 .topic-natural-resources > div:before,
-.topic-natural-resources a:hover,
+.topic-natural-resources > a:hover,
 .topic-natural-resources .active {
 	background: #8f7e35;
 }
-
 article:hover > div:before {
 	opacity: 1;
 }
@@ -104,7 +98,6 @@ article header h3 a {
 	display: block;
 	padding: 0.5rem 1rem;
 }
-
 article .article-summary {
 	display: none;
 	padding: 0 1rem;
@@ -112,24 +105,9 @@ article .article-summary {
 article:hover .article-summary {
 	display: block;
 }
-/*article .article-summary {
-	max-height: 0;
-	overflow-y: hidden;
-	padding: 0 1rem;
-	
-	transition-property: all;
-	transition-duration: 1s;
-	transition-timing-function: ease-in-out;
-	transition-timing-function: cubic-bezier(0, 0, 0.5, 0.5);
-}
-article:hover .article-summary {
-	max-height: 244px;
-}*/
-
 .more-button {
 	margin-top: 2rem;
 }
-
 .cahnrs-search {
 	padding: 0;
 	margin: 0 0 1rem 0;
@@ -211,7 +189,6 @@ article:hover .article-summary {
 	background: #c60c30;
 	border-width: 0;
 }
-
 .browse-terms {
 	padding: 0;
 	list-style: none;
@@ -276,7 +253,6 @@ article:hover .article-summary {
 .browse-terms.locations li a.active {
 	background: #981e32;
 }
-
 @media only screen and (max-width:480px) {
 	article:nth-child(3n+1),
 	article:nth-child(3n+2),
