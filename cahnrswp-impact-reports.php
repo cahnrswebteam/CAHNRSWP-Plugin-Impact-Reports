@@ -398,11 +398,7 @@ class CAHNRSWP_Impact_Reports {
 		if ( ( 'post-new.php' === $hook || 'post.php' === $hook ) && $this->impact_report_content_type === $screen->post_type ) {
 			wp_enqueue_style( 'impact-report-admin-style', plugins_url( 'css/admin-impact-report.css', __FILE__ ), array() );
 			wp_enqueue_script( 'impact-report-admin-scripts', plugins_url( 'js/admin-impact-report.js', __FILE__ ), array() );
-			/*wp_enqueue_script( 'impact-report-taxonomy-scripts', plugins_url( 'js/admin-impact-report-taxonomy.js', __FILE__ ), array(), '', true );*/
 		}
-		/*if ( 'edit.php' == $hook && $this->impact_report_content_type === $screen->post_type ) {
-			wp_enqueue_script( 'impact-report-taxonomy-scripts',plugins_url( 'js/admin-impact-report-taxonomy.js', __FILE__ ), array(), '', true );
-		}*/
 	}
 
 	/**
@@ -913,9 +909,7 @@ class CAHNRSWP_Impact_Reports {
 				$this->upload_impact_report_to_library( $file, $post_id, $year );
 			}
 			return $file;
-		} /*else {
-			return false;
-		}*/
+		}
 
 	}
 
