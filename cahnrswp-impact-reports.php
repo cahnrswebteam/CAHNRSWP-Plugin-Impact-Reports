@@ -144,6 +144,7 @@ class CAHNRSWP_Impact_Reports {
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'admin_head', array( $this, 'admin_head' ) );
+		add_filter( 'manage_taxonomies_for_impact_columns', array( $this, 'impact_columns' ) );
 		add_action( 'edit_form_after_title', array( $this, 'edit_form_after_title' ) );
 		add_filter( 'admin_post_thumbnail_html', array( $this, 'admin_post_thumbnail_html' ), 10, 1 );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 10, 2 );
@@ -524,6 +525,17 @@ class CAHNRSWP_Impact_Reports {
 
 		}
 		
+	}
+
+	/**
+	 * Add "Topic" and "University Location" taxonomy columns to the "All Impact Reports" page.
+	 *
+	 * @param $taxonomies
+	 */
+	public function impact_columns( $taxonomies ) {
+		$taxonomies[] = 'topic';
+		$taxonomies[] = 'wsuwp_university_location';
+		return $taxonomies;
 	}
 
 	/**
