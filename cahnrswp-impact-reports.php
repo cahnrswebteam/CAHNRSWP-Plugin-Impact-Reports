@@ -832,6 +832,49 @@ class CAHNRSWP_Impact_Reports {
 			}
 		}
 
+		// Copy specific meta field content into the_content.
+		if ( ! wp_is_post_revision( $post_id ) ){
+
+			// unhook this function so it doesn't loop infinitely.
+			remove_action( 'save_post', array( $this, 'save_post' ) );
+
+			$content = '';
+
+			$subtitle = $_POST['impact_report_subtitle'];
+			$headline = $_POST['impact_report_headline'];
+			$additional_title = $_POST['impact_report_additional_title'];
+
+			if ( isset( $subtitle ) && $subtitle != '' ) {
+				$content .= sanitize_text_field( $subtitle ) . "\n\n";
+			}
+
+			if ( isset( $headline ) && $headline != '' ) {
+				$content .= sanitize_text_field( $headline ) . "\n\n";
+			}
+
+			foreach ( $this->impact_report_editors as $i_k => $i_d ) {
+				if ( isset( $_POST[$i_k] ) && $_POST[$i_k] != '' ) {
+					if ( 'impact_report_additional' == $i_k ) {
+						if ( isset( $additional_title ) && $additional_title != '' ) {
+							$content .= sanitize_text_field( $additional_title ) . "\n\n";
+						}
+					}
+					$content .= wp_kses_post( $_POST[$i_k] ) . "\n\n";
+				}
+			}
+
+			$updated_post = array(
+				'ID'           => $post_id,
+				'post_content' => $content,
+			);
+
+			// update the post, which calls save_post again.
+			wp_update_post( $updated_post );
+
+			// re-hook this function.
+			add_action( 'save_post', array( $this, 'save_post' ) );
+		}
+
 		// Generate PDF. (Should this be editor only, too?)
 		$upload_directory = wp_upload_dir();
 		$upload_path = $upload_directory['basedir'] . '/temp_generated_pdfs';
