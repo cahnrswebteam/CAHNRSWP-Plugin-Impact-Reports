@@ -740,21 +740,24 @@ class CAHNRSWP_Impact_Reports {
 	public function impact_report_images( $post ) {
 		foreach ( $this->impact_report_meta as $i_k => $i_d ) {
 			if ( $i_d['type'] == 'img' ) {
-				$i_meta = get_post_meta( $post->ID, '_' . $i_k, true );
-				$i_meta_path = get_post_meta( $post->ID, '_' . $i_k . '-path', true );
-				echo '<div class="upload-set-wrapper">';
-				echo '<input id="' . $i_k . '" class="upload-image-id" type="text" name="' . $i_k . '" value="'. $i_meta .'" />';
-				echo '<p class="hide-if-no-js"><a href="#" title=" ' . $i_d['title'] . '" id="upload-image-button-' . $i_k . '" class="upload-image-button">';
-				if ( $i_meta ) {
-					$img_array = explode( '$S$', $i_meta );
-					$image = wp_get_attachment_image_src( $img_array[0], 'medium' );
-					echo '<img src="' . $image[0] . '" /></a></p>';
-					echo '<p class="hide-if-no-js"><a href="#" class="remove-ir-image">Remove ' . $i_d['title'] . '</a></p>';
-				} else {
-					echo 'Set ' . $i_d['title'] . '</a></p>';
-				}
-				echo '<p class="impact-report-image-size">(<span class="description">' . $i_d['desc'] . '</span>)</p>';
-				echo '</div>';
+				$value = get_post_meta( $post->ID, '_' . $i_k, true );
+				?>
+				<div class="upload-set-wrapper">
+					<input id="<?php echo $i_k; ?>" class="upload-image-id" type="text" name="<?php echo $i_k; ?>" value="<?php echo esc_attr( $value ); ?>" />
+					<p class="hide-if-no-js"><a href="#" title="<?php echo $i_d['title']; ?>" id="upload-image-button-<?php echo $i_k; ?>" class="upload-image-button">
+					<?php if ( $value ) : ?>
+						<?php
+            	$img_array = explode( '$S$', $value );
+							$image = wp_get_attachment_image_src( $img_array[0], 'thumbnail' );
+						?>
+						<img src="<?php echo esc_url( $image[0] ); ?>" /></a></p>
+						<p class="hide-if-no-js"><a href="#" class="remove-ir-image">Remove <?php echo $i_d['title']; ?></a></p>
+					<?php else : ?>
+						Set <?php echo $i_d['title']; ?></a></p>
+					<?php endif; ?>
+					<p class="impact-report-image-size">(<span class="description"><?php echo $i_d['desc']; ?></span>)</p>
+				</div>
+				<?php
 			}
 		}
 	}
