@@ -104,6 +104,7 @@ article .article-summary {
 }
 article:hover .article-summary {
 	display: block;
+	padding-bottom: 1rem;
 }
 .more-button {
 	margin-top: 2rem;

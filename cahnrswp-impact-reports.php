@@ -214,7 +214,7 @@ class CAHNRSWP_Impact_Reports {
 
 		$programs = array(
 			'labels'        => array(
-				'name'          => 'Programs',
+				'name'          => 'Program',
 				'singular_name' => 'Program',
 				'search_items'  => 'Search Programs',
 				'all_items'     => 'All Programs',
@@ -231,9 +231,35 @@ class CAHNRSWP_Impact_Reports {
 			'show_admin_column' => true,
 			'show_in_menu'      => true,
 			'query_var'         => $this->impact_report_programs,
+			'meta_box_cb'       => array( $this, programs_meta_box),
 		);
 		register_taxonomy( $this->impact_report_programs, $this->impact_report_content_type, $programs );
 
+	}
+
+	/**
+	 * Display the "Program" taxonomy items as radio buttons instead of checkboxes.
+	 */
+	public function programs_meta_box( $post, $meta_box_properties ) {
+		$taxonomy = $meta_box_properties['args']['taxonomy'];
+  	$tax = get_taxonomy( $taxonomy );
+  	$terms = get_terms( $taxonomy, array( 'hide_empty' => 0 ) );
+  	$name = 'tax_input[' . $taxonomy . ']';
+  	$postterms = get_the_terms( $post->ID, $taxonomy );
+  	$current = ( $postterms ? array_pop( $postterms ) : false );
+  	$current = ( $current ? $current->term_id : 0 );
+		?>
+		<input type="hidden" name="tax_input[<?php echo $taxonomy; ?>][]" value="0">
+    <ul id="<?php echo $taxonomy; ?>checklist" data-wp-lists="list:programs" class="categorychecklist form-no-clear">
+			<?php foreach( $terms as $term ) : ?>
+      <li id="<?php echo $id; ?>">
+      	<label class="selectit">
+        	<input value="<?php echo $term->term_id; ?>" type="radio" name="tax_input[<?php echo $taxonomy; ?>][]" id="in-<?php echo $id; ?>"<?php if ( $current === (int)$term->term_id ) { ?> checked="checked"<?php } ?>> <?php echo $term->name; ?>
+        </label>
+      </li>
+      <?php endforeach; ?>
+		</ul>
+		<?php
 	}
 
 	/**
@@ -371,11 +397,11 @@ class CAHNRSWP_Impact_Reports {
 		if ( ( 'post-new.php' === $hook || 'post.php' === $hook ) && $this->impact_report_content_type === $screen->post_type ) {
 			wp_enqueue_style( 'impact-report-admin-style', plugins_url( 'css/admin-impact-report.css', __FILE__ ), array() );
 			wp_enqueue_script( 'impact-report-admin-scripts', plugins_url( 'js/admin-impact-report.js', __FILE__ ), array() );
-			wp_enqueue_script( 'impact-report-taxonomy-scripts', plugins_url( 'js/admin-impact-report-taxonomy.js', __FILE__ ), array(), '', true );
+			/*wp_enqueue_script( 'impact-report-taxonomy-scripts', plugins_url( 'js/admin-impact-report-taxonomy.js', __FILE__ ), array(), '', true );*/
 		}
-		if ( 'edit.php' == $hook && $this->impact_report_content_type === $screen->post_type ) {
+		/*if ( 'edit.php' == $hook && $this->impact_report_content_type === $screen->post_type ) {
 			wp_enqueue_script( 'impact-report-taxonomy-scripts',plugins_url( 'js/admin-impact-report-taxonomy.js', __FILE__ ), array(), '', true );
-		}
+		}*/
 	}
 
 	/**
@@ -513,15 +539,17 @@ class CAHNRSWP_Impact_Reports {
 		
 		do_meta_boxes( get_current_screen(), 'after_title', $post );
 
-		$issue_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_impact_report_issue', true ) ) );
-		$response_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_impact_report_response', true ) ) );
-		$impact_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_impact_report_impacts', true ) ) );
+		$summary_count = mb_strlen( strip_tags( get_post_meta( $post->ID, '_impact_report_summary', true ) ), 'utf8' );
+		$summary_remaining = ( $summary_count ) ? 140 - $summary_count : '140';
+		$issue_count = mb_strlen( strip_tags( get_post_meta( $post->ID, '_impact_report_issue', true ) ), 'utf8' );
+		$response_count = mb_strlen( strip_tags( get_post_meta( $post->ID, '_impact_report_response', true ) ), 'utf8' );
+		$impact_count = mb_strlen( strip_tags( get_post_meta( $post->ID, '_impact_report_impacts', true ) ), 'utf8' );
 		$main_total = $issue_count + $response_count + $impact_count;
 		$main_remaining = ( $main_total ) ? 4500 - $main_total : '4500';
-		$numbers_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_impact_report_numbers', true ) ) );
+		$numbers_count = mb_strlen( strip_tags( get_post_meta( $post->ID, '_impact_report_numbers', true ), 'utf8' ) );
 		$front_sidebar_remaining = ( $numbers_count ) ? 900 - $numbers_count : '900';
-		$quotes_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_impact_report_quotes', true ) ) );
-		$additional_count = strlen( str_replace( ' ', '', get_post_meta( $post->ID, '_impact_report_additional', true ) ) );
+		$quotes_count = mb_strlen( strip_tags( get_post_meta( $post->ID, '_impact_report_quotes', true ), 'utf8' ) );
+		$additional_count = mb_strlen( strip_tags( get_post_meta( $post->ID, '_impact_report_additional', true ), 'utf8' ) );
 		$back_sidebar_total = $quotes_count + $additional_count;
 		$back_sidebar_remaining = ( $back_sidebar_total ) ? 900 - $back_sidebar_total : '900';
 
@@ -562,6 +590,10 @@ class CAHNRSWP_Impact_Reports {
 			
 			wp_editor( $value, $i_k, $editor_settings );
 
+			// Character count for summary.
+			if ( $i_k == 'impact_report_summary' ) {
+				echo '<div class="impact-report-character-count ir-summary-counter widget-top find-box-buttons">Summary characters remaining: <span>' . $summary_remaining . '</span></div>';
+			}
 			// Character count for main body components.
 			if ( $i_d['type'] == 'main' ) {
 				echo '<div class="impact-report-character-count ir-main-counter widget-top find-box-buttons">Main body characters remaining: <span>' . $main_remaining . '</span></div>';
@@ -826,9 +858,10 @@ class CAHNRSWP_Impact_Reports {
 				$this->upload_impact_report_to_library( $file, $post_id, $year );
 			}
 			return $file;
-		} else {
+		} /*else {
 			return false;
-		}
+		}*/
+
 	}
 
 	/**
@@ -1038,7 +1071,6 @@ class CAHNRSWP_Impact_Reports {
 			echo 'Sorry, no Impact Reports match the criteria.';
 		}
 
-    //die();
 		exit;
 	}
 
