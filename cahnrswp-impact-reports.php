@@ -147,8 +147,8 @@ class CAHNRSWP_Impact_Reports {
 		add_filter( 'manage_taxonomies_for_impact_columns', array( $this, 'impact_columns' ) );
 		add_action( 'edit_form_after_title', array( $this, 'edit_form_after_title' ) );
 		add_filter( 'admin_post_thumbnail_html', array( $this, 'admin_post_thumbnail_html' ), 10, 1 );
-		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 10, 2 );
-		add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
+		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 10, 1 );
+		add_action( 'save_post_impact', array( $this, 'save_post' ) );
 		add_filter( 'post_updated_messages', array( $this, 'post_updated_messages' ) );
 		add_filter( 'transition_post_status', array( $this, 'transition_post_status' ), 10, 3 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
@@ -520,7 +520,7 @@ class CAHNRSWP_Impact_Reports {
 			) );
 
 		}
-		
+
 	}
 
 	/**
@@ -544,7 +544,7 @@ class CAHNRSWP_Impact_Reports {
 		if ( $this->impact_report_content_type !== $post->post_type ) {
 			return;
 		}
-		
+
 		do_meta_boxes( get_current_screen(), 'after_title', $post );
 
 		$summary_count = mb_strlen( strip_tags( get_post_meta( $post->ID, '_impact_report_summary', true ) ), 'utf8' );
@@ -588,14 +588,14 @@ class CAHNRSWP_Impact_Reports {
 			}
 
 			$value = get_post_meta( $post->ID, '_' . $i_k, true );
-			
+
 			$editor_columns = ( 'impact_report_summary' === $i_k || 'impact_report_footer_front' === $i_k || 'impact_report_footer_back' === $i_k ) ? 2 : 10;
 
 			$editor_settings = array (
 				'textarea_rows' => $editor_columns,
 				'media_buttons' => false
 			);
-			
+
 			wp_editor( $value, $i_k, $editor_settings );
 
 			// Character count for summary.
@@ -781,13 +781,16 @@ class CAHNRSWP_Impact_Reports {
 			return $post_id;
 		}
 
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) { 
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return $post_id;
 		}
 
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return $post_id;
 		}
+
+		// Define variable to build out for post content.
+		$post_content = '';
 
 		// Sanitize and save basic fields.
 		foreach ( $this->impact_report_meta as $i_k => $i_d ) {
@@ -800,6 +803,9 @@ class CAHNRSWP_Impact_Reports {
 			} else {
 				if ( isset( $_POST[$i_k] ) && $_POST[$i_k] != '' ) {
 					update_post_meta( $post_id, '_' . $i_k, sanitize_text_field( $_POST[$i_k] ) );
+					if ( 'impact_report_subtitle' === $i_k || 'impact_report_headline' === $i_k || 'impact_report_additional_title' === $i_k ) {
+						$post_content .= sanitize_text_field( $_POST[$i_k] ) . "\n\n";
+					}
 				} else {
 					delete_post_meta( $post_id, '_' . $i_k );
 				}
@@ -810,6 +816,7 @@ class CAHNRSWP_Impact_Reports {
 		foreach ( $this->impact_report_editors as $i_k => $i_d ) {
 			if ( isset( $_POST[$i_k] ) && $_POST[$i_k] != '' ) {
 				update_post_meta( $post_id, '_' . $i_k, wp_kses_post( $_POST[$i_k] ) );
+				$post_content .= wp_kses_post( $_POST[$i_k] ) . "\n\n";
 			} else {
 				delete_post_meta( $post_id, '_' . $i_k );
 			}
@@ -832,49 +839,27 @@ class CAHNRSWP_Impact_Reports {
 		}
 
 		// Copy specific meta field content into the_content.
-		if ( ! wp_is_post_revision( $post_id ) ){
+		if ( ! wp_is_post_revision( $post_id ) ) {
 
-			// unhook this function so it doesn't loop infinitely.
-			remove_action( 'save_post', array( $this, 'save_post' ) );
+			remove_action( 'save_post_impact', array( $this, 'save_post' ) );
 
-			$content = '';
-
-			$subtitle = $_POST['impact_report_subtitle'];
-			$headline = $_POST['impact_report_headline'];
-			$additional_title = $_POST['impact_report_additional_title'];
-
-			if ( isset( $subtitle ) && $subtitle != '' ) {
-				$content .= sanitize_text_field( $subtitle ) . "\n\n";
-			}
-
-			if ( isset( $headline ) && $headline != '' ) {
-				$content .= sanitize_text_field( $headline ) . "\n\n";
-			}
-
-			foreach ( $this->impact_report_editors as $i_k => $i_d ) {
-				if ( isset( $_POST[$i_k] ) && $_POST[$i_k] != '' ) {
-					if ( 'impact_report_additional' == $i_k ) {
-						if ( isset( $additional_title ) && $additional_title != '' ) {
-							$content .= sanitize_text_field( $additional_title ) . "\n\n";
-						}
-					}
-					$content .= wp_kses_post( $_POST[$i_k] ) . "\n\n";
-				}
-			}
-
-			$updated_post = array(
+			wp_update_post( array(
 				'ID'           => $post_id,
-				'post_content' => $content,
-			);
+				'post_content' => $post_content,
+			) );
 
-			// update the post, which calls save_post again.
-			wp_update_post( $updated_post );
+			add_action( 'save_post_impact', array( $this, 'save_post' ) );
 
-			// re-hook this function.
-			add_action( 'save_post', array( $this, 'save_post' ) );
 		}
 
-		// Generate PDF. (Should this be editor only, too?)
+		$this->generate_pdf( $post_id, $_POST['_impact_report_pdf_revision'] );
+
+	}
+
+	/**
+	 * Generate PDF.
+	 */
+	private function generate_pdf( $post_id, $revision ) {
 		$upload_directory = wp_upload_dir();
 		$upload_path = $upload_directory['basedir'] . '/temp_generated_pdfs';
 		$upload_url = get_site_url() . '/wp-content/uploads/temp_generated_pdfs';
@@ -882,19 +867,19 @@ class CAHNRSWP_Impact_Reports {
 			mkdir( $upload_path, 0777, true );
 		}
 		$file = array();
-		if ( isset( $_POST['_impact_report_pdf_revision'] ) && '' != $_POST['_impact_report_pdf_revision'] ) {
-			$year = $_POST['_impact_report_pdf_revision'];
-		} else if ( get_post_meta( $post->ID, '_impact_report_pdf_revision', true ) && '' != $_POST['_impact_report_pdf_revision'] ) {
-			$year = get_post_meta( $post->ID, '_impact_report_pdf_revision', true );
+		if ( isset( $revision ) && '' != $revision ) {
+			$year = $revision;
+		} else if ( get_post_meta( $post_id, '_impact_report_pdf_revision', true ) && '' != $revision ) {
+			$year = get_post_meta( $post_id, '_impact_report_pdf_revision', true );
 		} else {
 			$year = date('Y');
 		}
 		$file['name'] = sanitize_title( get_the_title( $post_id ) ) . '-' . $year;
 		$file['path'] = $upload_path . '/' . $file['name'] . '.pdf';
 		$file['url']  = $upload_url . '/' . $file['name'] . '.pdf';
-		require_once ( plugin_dir_path( __FILE__ ) . 'dompdf/dompdf_config.inc.php' );
+		require_once ( __DIR__ . '/dompdf/dompdf_config.inc.php' );
 		ob_start();
-		include plugin_dir_path( __FILE__ ) . 'templates/pdf.php';
+		include __DIR__ . '/templates/pdf.php';
 		$html = ob_get_clean();
 		if ( $html ) {
 			$dompdf = new DOMPDF();
@@ -912,8 +897,9 @@ class CAHNRSWP_Impact_Reports {
 				$this->upload_impact_report_to_library( $file, $post_id, $year );
 			}
 			return $file;
+		} else {
+			return false;
 		}
-
 	}
 
 	/**
@@ -938,7 +924,7 @@ class CAHNRSWP_Impact_Reports {
 	/**
 	 * Upload generated PDF to media library.
 	 */
-	private function upload_impact_report_to_library( $file, $post_id, $year ) {		
+	private function upload_impact_report_to_library( $file, $post_id, $year ) {
 		$file_array = array(
 			'name' => $file['name'] . '.pdf',
 			'tmp_name' => $file['path']
@@ -1006,7 +992,7 @@ class CAHNRSWP_Impact_Reports {
 	 * @param object $post The post object.
 	 */
 	public function transition_post_status( $new_status, $old_status, $post ) {
-		
+
 		if ( $this->impact_report_content_type == $post->post_type && 'draft' == $old_status && 'pending' == $new_status ) {
 
 			$ir_title = get_the_title( $post->ID );
@@ -1117,7 +1103,7 @@ class CAHNRSWP_Impact_Reports {
 		$posts = new WP_Query( $ajax_args );
     if ( $posts->have_posts() ) {
 			while ( $posts->have_posts() ) : $posts->the_post();
-				load_template( dirname( __FILE__ ) . '/templates/archive-single.php', false );
+				load_template( dirname( __FILE__ ) . '/templates/post.php', false );
       endwhile;
 		} else {
 			echo 'Sorry, no Impact Reports match the criteria.';

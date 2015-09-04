@@ -51,13 +51,12 @@
 
 		var term = $(this),
 				type = term.data( 'type' ),
-				id   = term.data( 'id' );
+				slug = term.data( 'slug' );
+				
 
 		if ( ! term.hasClass( 'active' ) ) {
 
-			$( '.browse-terms li a' ).removeClass( 'active' );	
-
-			var slug = term.data( 'slug' );
+			$( '.browse-terms li a' ).removeClass( 'active' );
 
 			$( '#load-more-impact-reports' ).hide();
 

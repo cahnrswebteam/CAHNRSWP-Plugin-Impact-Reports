@@ -61,7 +61,7 @@
 					echo '<ul class="browse-terms topics">';
 					foreach ( $topics as $topic ) {
 						echo '<li class="topic-' . $topic->slug . '">';
-						echo '<a href="' . get_term_link( $topic ) . '" data-type="topic" data-id="' . $topic->term_id . '" data-level="top" data-slug="' . $topic->slug . '" data-name="' . $topic->name . '">' . $topic->name . '</a>';
+						echo '<a href="' . get_term_link( $topic ) . '" data-type="topic" data-slug="' . $topic->slug . '" data-name="' . $topic->name . '">' . $topic->name . '</a>';
 						echo '</li>';
 					}
 					echo '</ul>';
@@ -77,7 +77,7 @@
 						echo '<ul class="browse-terms locations">';
 						foreach ( $locations as $location ) {
 							echo '<li class="wsuwp_university_location-' . $location->slug . '">';
-							echo '<a href="' . get_term_link( $location ) . '" data-type="wsuwp_university_location" data-level="top" data-slug="' . $location->slug . '" data-name="' . $location->name . '">' . $location->name . '</a>';
+							echo '<a href="' . get_term_link( $location ) . '" data-type="wsuwp_university_location" data-slug="' . $location->slug . '" data-name="' . $location->name . '">' . $location->name . '</a>';
 							echo '</li>';
 						}
 						echo '</ul>';
