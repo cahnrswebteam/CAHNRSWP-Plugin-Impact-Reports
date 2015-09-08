@@ -67,11 +67,6 @@ class CAHNRSWP_Impact_Reports {
 			'desc'  => '',
 			'type'  => '',
 		),
-		/*'ir_author' => array(
-			'title' => 'Report Author Email Address',
-			'desc'  => '(not displayed)',
-			'type'  => 'text',
-		),*/
 	);
 
 	/**
