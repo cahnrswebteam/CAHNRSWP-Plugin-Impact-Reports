@@ -21,7 +21,7 @@ header time:last-of-type:before {
 }
 #impact-report-pdf-archive dt {
 	background: url(../images/plus-crimson.svg) right center no-repeat;
-	background-size: 12px 12px;
+	background-size: 13px 13px;
 	cursor: pointer;
 	display: block;
 	padding: 0.5rem 0;

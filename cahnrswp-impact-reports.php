@@ -149,8 +149,8 @@ class CAHNRSWP_Impact_Reports {
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
 		add_filter( 'nav_menu_css_class', array( $this, 'nav_menu_css_class'), 100, 3 );
-		add_action( 'wp_ajax_nopriv_ajax_post_request', array( $this, 'ajax_post_request' ) );
-		add_action( 'wp_ajax_ajax_post_request', array( $this, 'ajax_post_request' ) );
+		add_action( 'wp_ajax_nopriv_extension_impacts_request', array( $this, 'ajax_post_request' ) );
+		add_action( 'wp_ajax_extension_impacts_request', array( $this, 'ajax_post_request' ) );
 		$this->impact_report_editor = get_option( 'impact_report_editor_email' );
 	}
 
@@ -1018,8 +1018,7 @@ class CAHNRSWP_Impact_Reports {
 			wp_enqueue_style( 'impact-report', plugins_url( 'css/impact-report.css', __FILE__ ), array( 'wsu-spine' ) );
 			wp_enqueue_script( 'impact-report', plugins_url( 'js/impact-report.js', __FILE__ ), array( 'jquery' ), '', true );
 		}
-		if ( is_post_type_archive( $this->impact_report_content_type ) || ( $this->impact_report_content_type === get_post_type() && is_archive() ) ) {
-			global $wp_query;
+		if ( is_post_type_archive( $this->impact_report_content_type ) ) {
 			wp_enqueue_style( 'impact-report-archive', plugins_url( 'css/impact-report-archive.css', __FILE__ ), array( 'spine-theme' ) );
 			wp_enqueue_script( 'impact-report-archive', plugins_url( 'js/impact-report-archive.js', __FILE__ ), array( 'jquery' ), '', true );
 			wp_localize_script( 'impact-report-archive', 'impacts', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
@@ -1034,10 +1033,10 @@ class CAHNRSWP_Impact_Reports {
 	 * @return string template path
 	 */
 	public function template_include( $template ) {
-		if ( $this->impact_report_content_type == get_post_type() ) {
+		if ( is_single() && $this->impact_report_content_type == get_post_type() ) {
 			$template = plugin_dir_path( __FILE__ ) . 'templates/single.php';
 		}
-		if ( is_post_type_archive( $this->impact_report_content_type ) || ( $this->impact_report_content_type === get_post_type() && is_archive() ) ) {
+		if ( is_post_type_archive( $this->impact_report_content_type ) ) {
 			$template = plugin_dir_path( __FILE__ ) . 'templates/index.php';
 		}
 		if ( is_front_page() && isset( $_GET['resized'] ) ) {

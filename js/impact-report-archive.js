@@ -18,7 +18,7 @@
 				url: impacts.ajaxurl,
 				type: 'post',
 				data: {
-					action: 'ajax_post_request',
+					action: 'extension_impacts_request',
 					page: next_page
 				},
 				beforeSend: function() {
@@ -53,7 +53,6 @@
 				type = term.data( 'type' ),
 				slug = term.data( 'slug' );
 				
-
 		if ( ! term.hasClass( 'active' ) ) {
 
 			$( '.browse-terms li a' ).removeClass( 'active' );
@@ -66,7 +65,7 @@
 				url: impacts.ajaxurl,
 				type: 'post',
 				data: {
-					action: 'ajax_post_request',
+					action: 'extension_impacts_request',
 					type: type,
 					term: slug,
 				},
@@ -89,7 +88,7 @@
 				url: impacts.ajaxurl,
 				type: 'post',
 				data: {
-					action: 'ajax_post_request',
+					action: 'extension_impacts_request',
 					reset: loaded,
 				},
 				success: function( html ) {
