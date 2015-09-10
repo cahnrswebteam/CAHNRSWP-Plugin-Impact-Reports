@@ -49,9 +49,9 @@
 				<input type="hidden" name="post_type" value="impact">
 				<label>
 					<span class="screen-reader-text">Search Impact Reports for:</span>
-					<input type="search" class="search-field" placeholder="Search Impact Reports" value="<?php echo get_search_query(); ?>" name="s" title="Search Impact Reports for:" />
+					<input type="search" class="cahnrs-search-field" placeholder="Search Impact Reports" value="<?php echo get_search_query(); ?>" name="s" title="Search Impact Reports for:" />
 				</label>
-				<input type="submit" class="search-submit" value="$" />
+				<input type="submit" class="cahnrs-search-submit" value="$" />
 			</form>
 
 			<h2>Topics</h2>
