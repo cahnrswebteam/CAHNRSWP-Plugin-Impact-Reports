@@ -14,7 +14,7 @@
 
 	</section>
 
-	<section class="row side-right gutter pad-ends full-bleed gray-darker-back">
+	<section class="row side-right gutter pad-ends full-bleed gray-darker-back gray-er-text">
 
 		<div class="column one">
 
@@ -43,7 +43,9 @@
 				</div>
 			<?php endif; ?>
 
-		</div><div class="column two">
+		</div>
+    
+    <div class="column two">
 
 			<form role="search" method="get" class="cahnrs-search" action="<?php echo home_url( '/' ); ?>">
 				<input type="hidden" name="post_type" value="impact">
