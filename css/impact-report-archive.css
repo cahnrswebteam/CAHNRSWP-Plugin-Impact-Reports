@@ -155,8 +155,9 @@ article:hover .article-summary {
 	border-color: #8f7e35;
 }
 .locations-container {
-	height: 150px;
-	overflow: scroll;
+	box-sizing: border-box;
+	height: 150px; height: 220px;
+	overflow: auto;
 	position: relative;
 }
 .browse-terms.locations {
