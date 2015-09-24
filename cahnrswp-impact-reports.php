@@ -199,6 +199,7 @@ class CAHNRSWP_Impact_Reports {
 			),
 			'taxonomies' => array(
 				$this->impact_report_programs,
+				'post_tag', // DB Added
 			),
 			'has_archive' => true,
 			'rewrite' => array(
