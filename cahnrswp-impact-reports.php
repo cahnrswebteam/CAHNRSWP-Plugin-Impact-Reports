@@ -146,6 +146,7 @@ class CAHNRSWP_Impact_Reports {
 		add_action( 'save_post_impact', array( $this, 'save_post' ) );
 		add_filter( 'post_updated_messages', array( $this, 'post_updated_messages' ) );
 		add_filter( 'transition_post_status', array( $this, 'transition_post_status' ), 10, 3 );
+		add_filter( 'json_prepare_post', array( $this, 'json_prepare_post' ), 10, 3 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
 		add_filter( 'nav_menu_css_class', array( $this, 'nav_menu_css_class'), 100, 3 );
@@ -1009,6 +1010,41 @@ class CAHNRSWP_Impact_Reports {
 	 */
 	public function set_html_content_type() {
 		return 'text/html';
+	}
+
+	/**
+	 * Provide formatted results for Impact Reports via the WP JSON API.
+	 */
+	public function json_prepare_post( $post_response, $post, $context ) {
+
+		$key = '';
+		$value = '';
+
+		// Content from the wp_editors.
+		foreach ( $this->impact_report_editors as $i_k => $i_d ) {
+			$value = get_post_meta( $post['ID'], '_' . $i_k, true );
+			if ( $value ) {
+				$key = substr( $i_k, 14 ); // Remove the "impact_report_" prefix.
+				$value = apply_filters( 'the_content', $value );
+				$value = wp_kses_post( $value );
+			}
+			$post_response[$key] = $value;
+		}
+
+		// Images and text fields (hmm... may need to handle images separately)
+		foreach ( $this->impact_report_meta as $i_k => $i_d ) {
+			$value = get_post_meta( $post['ID'], '_' . $i_k, true );
+			if ( $value ) {
+				$key = substr( $i_k, 14 ); // Remove the "impact_report_" prefix.
+				$value = sanitize_text_field( $value );
+			}
+			if ( 'impact_report_impacts_position' !== $i_k ) {
+				$post_response[$key] = $value;
+			}
+		}
+
+		return $post_response;
+
 	}
 
 	/**
