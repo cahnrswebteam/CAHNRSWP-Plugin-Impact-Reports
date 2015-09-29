@@ -54,7 +54,7 @@ jQuery(document).ready(function($){
 			attachment = custom_uploader.state().get( 'selection' ).first().toJSON();
 			upload_input.val( attachment.id + '$S$' + attachment.url );
 			if ( attachment.sizes.hasOwnProperty( 'thumbnail' ) ) {
-				upload_link.html( '<img src="' + attachment.sizes.thumbnail.url + '" />' );
+				upload_link.html( '<img src="' + attachment.sizes.medium.url + '" />' );
 			} else {
 				upload_link.html( '<img src="' + attachment.url + '" />' );
 			}

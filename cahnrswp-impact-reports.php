@@ -745,7 +745,7 @@ class CAHNRSWP_Impact_Reports {
 					<?php if ( $value ) : ?>
 						<?php
             	$img_array = explode( '$S$', $value );
-							$image = wp_get_attachment_image_src( $img_array[0], 'thumbnail' );
+							$image = wp_get_attachment_image_src( $img_array[0], 'medium' );
 						?>
 						<img src="<?php echo esc_url( $image[0] ); ?>" /></a></p>
 						<p class="hide-if-no-js"><a href="#" class="remove-ir-image">Remove <?php echo $i_d['title']; ?></a></p>
