@@ -561,7 +561,7 @@ class CAHNRSWP_Impact_Reports {
 		foreach ( $this->impact_report_editors as $i_k => $i_d ) {
 
 			// Checkbox for Impacts Position.
-			if ( $i_k == 'impact_report_impacts' ) {
+			if ( 'impact_report_impacts' == $i_k ) {
 				$value = get_post_meta( $post->ID, '_impact_report_impacts_position', true );
 				echo '<label for="impact_report_impacts_position"><input type="checkbox" name="impact_report_impacts_position" id="impact_report_impacts_position" value="front"';
 				checked( $value, 'front' );
@@ -572,7 +572,7 @@ class CAHNRSWP_Impact_Reports {
 			echo '<p class="description impact-report-description">' . $i_d['desc'] . '</p>';
 
 			// Title field for Additional area.
-			if ( $i_k == 'impact_report_additional' ) {
+			if ( 'impact_report_additional' == $i_k ) {
 				$value = get_post_meta( $post->ID, '_impact_report_additional_title', true );
 				echo '<div id="impact-report-additional-title-wrap">';
 				echo '<label';
@@ -596,19 +596,19 @@ class CAHNRSWP_Impact_Reports {
 			wp_editor( $value, $i_k, $editor_settings );
 
 			// Character count for summary.
-			if ( $i_k == 'impact_report_summary' ) {
+			if ( 'impact_report_summary' == $i_k ) {
 				echo '<div class="impact-report-character-count ir-summary-counter widget-top find-box-buttons">Summary characters remaining: <span>' . $summary_remaining . '</span></div>';
 			}
 			// Character count for main body components.
-			if ( $i_d['type'] == 'main' ) {
+			if ( 'main' == $i_d['type'] ) {
 				echo '<div class="impact-report-character-count ir-main-counter widget-top find-box-buttons">Main body characters remaining: <span>' . $main_remaining . '</span></div>';
 			}
 			// Character count for front page sidebar.
-			if ( $i_d['type'] == 'front-sidebar' ) {
+			if ( 'front-sidebar' == $i_d['type'] ) {
 				echo '<div class="impact-report-character-count ir-front-sidebar-counter widget-top find-box-buttons">Front page sidebar characters remaining: <span>' . $front_sidebar_remaining . '</span></div>';
 			}
 			// Character count for back page sidebar components.
-			if ( $i_d['type'] == 'back-sidebar' ) {
+			if ( 'back-sidebar' == $i_d['type'] ) {
 				echo '<div class="impact-report-character-count ir-back-sidebar-counter widget-top find-box-buttons">Back page sidebar characters remaining: <span>' . $back_sidebar_remaining . '</span></div>';
 			}
 
@@ -693,7 +693,7 @@ class CAHNRSWP_Impact_Reports {
 		wp_nonce_field( 'impact_report_meta', 'impact_report_meta_nonce' );
 		echo '<p class="description">Click the "Help" tab at the top right of the screen for more information on creating an Impact Report.</p>';
 		foreach ( $this->impact_report_meta as $i_k => $i_d ) {
-			if ( $i_d['type'] == 'text' ) {
+			if ( 'text' == $i_d['type'] ) {
 				$value = get_post_meta( $post->ID, '_' . $i_k, true );
 				echo '<p><strong><label for="' . $i_k . '">' . $i_d['title'] . '</label></strong>';
 				if ( $i_d['desc'] != '' ) {
@@ -736,7 +736,7 @@ class CAHNRSWP_Impact_Reports {
 	 */
 	public function impact_report_images( $post ) {
 		foreach ( $this->impact_report_meta as $i_k => $i_d ) {
-			if ( $i_d['type'] == 'img' ) {
+			if ( 'img' == $i_d['type'] ) {
 				$value = get_post_meta( $post->ID, '_' . $i_k, true );
 				?>
 				<div class="upload-set-wrapper">
@@ -1017,6 +1017,10 @@ class CAHNRSWP_Impact_Reports {
 	 */
 	public function json_prepare_post( $post_response, $post, $context ) {
 
+		if ( $this->impact_report_content_type !== $post['post_type'] ) {
+			return $post_response;
+		}
+
 		$key = '';
 		$value = '';
 
@@ -1031,13 +1035,19 @@ class CAHNRSWP_Impact_Reports {
 			$post_response[$key] = $value;
 		}
 
-		// Images and text fields (hmm... may need to handle images separately)
+		// Images and text fields.
 		foreach ( $this->impact_report_meta as $i_k => $i_d ) {
 			$value = get_post_meta( $post['ID'], '_' . $i_k, true );
 			if ( $value ) {
 				$key = substr( $i_k, 14 ); // Remove the "impact_report_" prefix.
 				$value = sanitize_text_field( $value );
+				if ( 'img' == $i_d['type'] ) {
+					$img_array = explode( '$S$', $value );
+					$image = wp_get_attachment_image_src( $img_array[0], 'thumbnail' );
+					$value = esc_url( $image[0] );
+				}
 			}
+			
 			if ( 'impact_report_impacts_position' !== $i_k ) {
 				$post_response[$key] = $value;
 			}
