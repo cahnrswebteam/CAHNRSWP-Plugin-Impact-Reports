@@ -38,7 +38,7 @@
 			?>
 
 			<?php if ( get_next_posts_link() ) : ?> 
-				<div class="more-button center" id="load-more-impact-reports">
+				<div class="more-button center white" id="load-more-impact-reports">
       		<a href="<?php next_posts(); ?>" data-page="<?php echo $paged; ?>" data-max="<?php echo $max; ?>" data-loaded="1">More</a>
 				</div>
 			<?php endif; ?>

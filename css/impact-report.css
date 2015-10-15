@@ -1,3 +1,6 @@
+.main-header {
+	height: 500px;
+}
 .main-header sub:not(.unset) {
 	display: none;
 }
