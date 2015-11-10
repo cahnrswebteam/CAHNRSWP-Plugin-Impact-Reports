@@ -402,7 +402,7 @@ class CAHNRSWP_Impact_Reports {
 	 * Add options page link to the menu.
 	 */
 	public function admin_menu() {
-		add_submenu_page( 'edit.php?post_type=' . $this->impact_report_content_type, 'Impact Report Settings', 'Settings', 'manage_options', 'settings', array( $this, 'impact_reports_settings_page' ) );
+		add_submenu_page( 'edit.php?post_type=' . $this->impact_report_content_type, 'Impact Report Settings', 'Settings', 'manage_options', 'impact_report_settings', array( $this, 'impact_reports_settings_page' ) );
 	}
 
 	/**
