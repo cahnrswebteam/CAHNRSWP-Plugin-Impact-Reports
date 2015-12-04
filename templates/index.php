@@ -56,7 +56,7 @@
 				<input type="submit" class="cahnrs-search-submit" value="$" />
 			</form>
 
-			<h2>Topics</h2>
+			<h2>Filter by Topic</h2>
 			<?php
 				$topics = get_terms( 'topic', array( 'parent' => 0 ) );
 				if ( ! empty( $topics ) && ! is_wp_error( $topics ) ) {
@@ -70,7 +70,7 @@
  				}
 			?>
 
-			<h2>Locations</h2>
+			<h2>Filter by Location</h2>
 			<div class="locations-container">
 				<?php
 					$extension = get_term_by( 'name', 'WSU Extension', 'wsuwp_university_location' );
